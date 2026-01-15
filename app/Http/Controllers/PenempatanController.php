@@ -14,10 +14,16 @@ class PenempatanController extends Controller
      */
     public function index()
     {
-        // Eager loading barang & ruangan biar query cepat
-        $penempatans = Penempatan::with(['barang', 'ruangan'])->latest()->paginate(10);
+        $penempatans = Penempatan::with(['barang', 'ruangan'])
+            ->filter(request()->all())
+            ->latest() // Default sort
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('penempatan.index', compact('penempatans'));
+        // Butuh list ruangan buat dropdown filter
+        $ruangans = Ruangan::all();
+
+        return view('penempatan.index', compact('penempatans', 'ruangans'));
     }
 
     /**

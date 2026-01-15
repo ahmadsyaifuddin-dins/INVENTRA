@@ -12,9 +12,10 @@ class RuanganController extends Controller
      */
     public function index()
     {
-        // Kita ambil data ruangan + hitung berapa kali ruangan ini dipakai di tabel penempatan
-        // withCount('penempatans') akan otomatis membuat field 'penempatans_count'
-        $ruangans = Ruangan::withCount('penempatans')->latest()->paginate(10);
+        $ruangans = Ruangan::withCount('penempatans')
+            ->filter(request()->all())
+            ->paginate(10)
+            ->withQueryString();
 
         return view('ruangan.index', compact('ruangans'));
     }

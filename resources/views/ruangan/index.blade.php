@@ -3,14 +3,17 @@
         {{ __('Master Data Ruangan') }}
     </x-slot>
 
-    <div class="mb-6 flex justify-between items-center">
+    <x-table.search-header :url="route('ruangan.index')">
         <div>
             <h3 class="text-gray-800 font-bold text-xl">Daftar Ruangan</h3>
             <p class="text-gray-500 text-sm">Lokasi penyimpanan aset inventaris kantor.</p>
         </div>
+    </x-table.search-header>
+
+    <div class="mb-4 text-right">
         <a href="{{ route('ruangan.create') }}"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            class="inline-flex bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition items-center gap-2 text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             Tambah Ruangan
@@ -24,10 +27,10 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">No
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">Nama
-                            Ruangan</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">
-                            Penanggung Jawab</th>
+
+                        <x-table.sortable-th name="nama_ruangan" label="Nama Ruangan" />
+                        <x-table.sortable-th name="penanggung_jawab" label="Penanggung Jawab" />
+
                         <th class="px-6 py-3 text-center text-xs font-bold text-indigo-800 uppercase tracking-wider">
                             Aset Masuk</th>
                         <th class="px-6 py-3 text-right text-xs font-bold text-indigo-800 uppercase tracking-wider">Aksi
@@ -75,14 +78,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <a href="{{ route('ruangan.edit', $r->id) }}"
-                                    class="text-indigo-600 hover:text-indigo-900 mr-3 inline-flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                    Edit
-                                </a>
+                                    class="text-indigo-600 hover:text-indigo-900 mr-3 font-semibold">Edit</a>
                                 <x-forms.delete-button :action="route('ruangan.destroy', $r->id)" />
                             </td>
                         </tr>

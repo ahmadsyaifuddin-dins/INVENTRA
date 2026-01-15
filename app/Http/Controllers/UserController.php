@@ -13,8 +13,11 @@ class UserController extends Controller
      */
     public function index()
     {
-        // Ambil data user, urutkan terbaru, dan paginate
-        $users = User::latest()->paginate(10);
+        // Ganti query lama dengan filter()
+        $users = User::latest()
+            ->filter(request()->all())
+            ->paginate(10)
+            ->withQueryString();
 
         return view('users.index', compact('users'));
     }

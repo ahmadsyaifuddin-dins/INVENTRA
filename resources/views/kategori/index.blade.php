@@ -3,11 +3,17 @@
         {{ __('Master Data Kategori') }}
     </x-slot>
 
-    <div class="mb-6 flex justify-between items-center">
-        <p class="text-gray-500 text-sm">Kelola jenis/kelompok barang inventaris.</p>
+    <x-table.search-header :url="route('kategori.index')">
+        <div>
+            <h3 class="text-gray-800 font-bold text-xl">Master Data Kategori</h3>
+            <p class="text-gray-500 text-sm">Kelompok jenis aset inventaris.</p>
+        </div>
+    </x-table.search-header>
+
+    <div class="mb-4 text-right">
         <a href="{{ route('kategori.create') }}"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            class="inline-flex bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition items-center gap-2 text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             Tambah Kategori
@@ -21,13 +27,12 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">No
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">Kode
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">Nama
-                            Kategori</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">
-                            Deskripsi</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">Jml
+
+                        <x-table.sortable-th name="kode_kategori" label="Kode" />
+                        <x-table.sortable-th name="nama_kategori" label="Nama Kategori" />
+                        <x-table.sortable-th name="deskripsi" label="Deskripsi" />
+
+                        <th class="px-6 py-3 text-center text-xs font-bold text-indigo-800 uppercase tracking-wider">Jml
                             Barang</th>
                         <th class="px-6 py-3 text-right text-xs font-bold text-indigo-800 uppercase tracking-wider">Aksi
                         </th>
@@ -58,12 +63,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <a href="{{ route('kategori.edit', $k->id) }}"
-                                    class="text-indigo-600 hover:text-indigo-900 mr-3 inline-flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
+                                    class="text-indigo-600 hover:text-indigo-900 mr-3 inline-flex items-center font-semibold">
                                     Edit
                                 </a>
                                 <x-forms.delete-button :action="route('kategori.destroy', $k->id)" />

@@ -12,7 +12,10 @@ class KategoriController extends Controller
      */
     public function index()
     {
-        $kategoris = Kategori::latest()->paginate(10);
+        $kategoris = Kategori::withCount('barangs') // Tetap pakai withCount
+            ->filter(request()->all())      // Tambah filter
+            ->paginate(10)
+            ->withQueryString();
 
         return view('kategori.index', compact('kategoris'));
     }

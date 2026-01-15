@@ -3,14 +3,45 @@
         {{ __('Transaksi Distribusi Aset') }}
     </x-slot>
 
-    <div class="mb-6 flex justify-between items-center">
+    <x-table.search-header :url="route('penempatan.index')">
         <div>
             <h3 class="text-gray-800 font-bold text-xl">Riwayat Distribusi</h3>
-            <p class="text-gray-500 text-sm">Daftar penempatan aset ke ruangan-ruangan.</p>
+            <p class="text-gray-500 text-sm">Daftar penempatan aset ke ruangan.</p>
         </div>
+
+        <x-slot name="filter">
+            <div class="mb-3">
+                <label class="block text-xs font-medium text-gray-700 mb-1">Kondisi</label>
+                <select name="kondisi"
+                    class="w-full text-xs rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                    <option value="">Semua Kondisi</option>
+                    <option value="Baik" {{ request('kondisi') == 'Baik' ? 'selected' : '' }}>Baik</option>
+                    <option value="Rusak Ringan" {{ request('kondisi') == 'Rusak Ringan' ? 'selected' : '' }}>Rusak
+                        Ringan</option>
+                    <option value="Rusak Berat" {{ request('kondisi') == 'Rusak Berat' ? 'selected' : '' }}>Rusak Berat
+                    </option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="block text-xs font-medium text-gray-700 mb-1">Ruangan Tujuan</label>
+                <select name="ruangan_id"
+                    class="w-full text-xs rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                    <option value="">Semua Ruangan</option>
+                    @foreach ($ruangans as $r)
+                        <option value="{{ $r->id }}" {{ request('ruangan_id') == $r->id ? 'selected' : '' }}>
+                            {{ $r->nama_ruangan }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </x-slot>
+    </x-table.search-header>
+
+    <div class="mb-4 text-right">
         <a href="{{ route('penempatan.create') }}"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            class="inline-flex bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition items-center gap-2 text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             Tambah Distribusi
@@ -26,12 +57,11 @@
                             / Barang</th>
                         <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">
                             Lokasi (Ruangan)</th>
-                        <th class="px-6 py-3 text-center text-xs font-bold text-indigo-800 uppercase tracking-wider">
-                            Jumlah</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">
-                            Kondisi</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">
-                            Tanggal</th>
+
+                        <x-table.sortable-th name="jumlah" label="Jumlah" />
+                        <x-table.sortable-th name="kondisi" label="Kondisi" />
+                        <x-table.sortable-th name="created_at" label="Tanggal" />
+
                         <th class="px-6 py-3 text-right text-xs font-bold text-indigo-800 uppercase tracking-wider">Aksi
                         </th>
                     </tr>
@@ -105,14 +135,7 @@
 
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <a href="{{ route('penempatan.edit', $p->id) }}"
-                                    class="text-indigo-600 hover:text-indigo-900 mr-3 inline-flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                    Edit
-                                </a>
+                                    class="text-indigo-600 hover:text-indigo-900 mr-3 font-semibold">Edit</a>
                                 <x-forms.delete-button :action="route('penempatan.destroy', $p->id)" />
                             </td>
                         </tr>

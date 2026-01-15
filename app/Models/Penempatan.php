@@ -2,17 +2,20 @@
 
 namespace App\Models;
 
+use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Penempatan extends Model
 {
-    use HasFactory;
+    use Filterable, HasFactory;
 
     protected $table = 'penempatan';
 
     protected $guarded = ['id'];
+
+    protected $searchable = ['kondisi'];
 
     // Relasi: Penempatan memuat data satu Barang
     public function barang(): BelongsTo
