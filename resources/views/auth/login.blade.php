@@ -88,7 +88,7 @@
 
             <div class="absolute bottom-0 left-0 p-20 text-white z-20">
                 <h1 class="text-4xl font-bold mb-4 drop-shadow-lg">Selamat Datang</h1>
-                <p class="text-lg text-indigo-100 max-w-lg drop-shadow-md">
+                <p class="text-lg text-indigo-100 max-w-lg drop-shadow-md backdrop-blur-sm">
                     Sistem Pengelolaan Inventaris Barang Milik Negara yang transparan, akuntabel, dan modern.
                 </p>
             </div>
