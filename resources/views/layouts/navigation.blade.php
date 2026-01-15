@@ -21,7 +21,7 @@
         </div>
     </div>
 
-    <nav class="mt-10 px-4 space-y-2">
+    <nav class="mt-5 px-4 space-y-1">
 
         <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')"
             class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-indigo-700 text-white shadow-md ring-1 ring-indigo-600' : 'text-indigo-100 hover:bg-indigo-800/50 hover:text-white' }}">
@@ -38,7 +38,7 @@
             {{ __('Beranda') }}
         </x-nav-link>
 
-        <div class="px-4 mt-8 mb-2 text-xs font-bold text-indigo-400 uppercase tracking-widest opacity-80">
+        <div class="px-4 mt-5 mb-2 text-xs font-bold text-indigo-400 uppercase tracking-widest opacity-80">
             Master Data
         </div>
 
@@ -88,7 +88,7 @@
             {{ __('Data Ruangan') }}
         </x-nav-link>
 
-        <div class="px-4 mt-8 mb-2 text-xs font-bold text-indigo-400 uppercase tracking-widest opacity-80">
+        <div class="px-4 mt-5 mb-2 text-xs font-bold text-indigo-400 uppercase tracking-widest opacity-80">
             Transaksi
         </div>
 
@@ -103,6 +103,10 @@
             </x-slot>
             {{ __('Distribusi Aset') }}
         </x-nav-link>
+
+        <div class="px-4 mt-5 mb-2 text-xs font-bold text-indigo-400 uppercase tracking-widest opacity-80">
+            Laporan
+        </div>
 
         <x-nav-link href="{{ route('laporan.index') }}" :active="request()->routeIs('laporan.*')"
             class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('laporan.*') ? 'bg-indigo-700 text-white shadow-md ring-1 ring-indigo-600' : 'text-indigo-100 hover:bg-indigo-800/50 hover:text-white' }}">
