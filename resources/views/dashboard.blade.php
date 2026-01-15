@@ -91,7 +91,7 @@
                             <td class="px-6 py-4"><span
                                     class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded-full ring-1 ring-green-600/20">Online</span>
                             </td>
-                            <td class="px-6 py-4">MySQL / MariaDB Connected</td>
+                            <td class="px-6 py-4">MySQL Connected</td>
                         </tr>
                         <tr class="bg-white border-b hover:bg-gray-50">
                             <td class="px-6 py-4 font-medium text-gray-900">Security Guard</td>
