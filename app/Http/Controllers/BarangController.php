@@ -11,10 +11,16 @@ class BarangController extends Controller
 {
     public function index()
     {
-        // Eager loading kategori biar query ringan
-        $barangs = Barang::with('kategori')->latest()->paginate(10);
+        // Filterable Trait akan menangani semua request('search'), request('sort'), dll
+        $barangs = Barang::with('kategori')
+            ->filter(request()->all())
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('barang.index', compact('barangs'));
+        // Kita butuh list kategori buat Filter Dropdown
+        $kategoris = Kategori::all();
+
+        return view('barang.index', compact('barangs', 'kategoris'));
     }
 
     public function create()
@@ -35,7 +41,7 @@ class BarangController extends Controller
             'merek' => 'nullable|string|max:50',
             'tahun_perolehan' => 'required|digits:4|integer|min:2000|max:'.(date('Y') + 1),
             'satuan' => 'required|string|max:20',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi file
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $data = $request->all();

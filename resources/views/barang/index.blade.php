@@ -3,14 +3,37 @@
         {{ __('Data Induk Barang') }}
     </x-slot>
 
-    <div class="mb-6 flex justify-between items-center">
+    <x-table.search-header :url="route('barang.index')">
         <div>
             <h3 class="text-gray-800 font-bold text-xl">Daftar Aset</h3>
             <p class="text-gray-500 text-sm">Semua barang yang terdaftar di sistem inventaris.</p>
         </div>
+
+        <x-slot name="filter">
+            <div class="mb-3">
+                <label class="block text-xs font-medium text-gray-700 mb-1">Kategori</label>
+                <select name="kategori_id"
+                    class="w-full text-xs rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                    <option value="">Semua Kategori</option>
+                    @foreach ($kategoris as $k)
+                        <option value="{{ $k->id }}" {{ request('kategori_id') == $k->id ? 'selected' : '' }}>
+                            {{ $k->nama_kategori }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="block text-xs font-medium text-gray-700 mb-1">Tahun Perolehan</label>
+                <input type="number" name="tahun_perolehan" value="{{ request('tahun_perolehan') }}"
+                    class="w-full text-xs rounded-md border-gray-300 focus:border-indigo-500" placeholder="Cth: 2023">
+            </div>
+        </x-slot>
+    </x-table.search-header>
+
+    <div class="mb-4 text-right">
         <a href="{{ route('barang.create') }}"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            class="inline-flex bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition items-center gap-2 text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             Tambah Barang
@@ -22,12 +45,10 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-indigo-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">Info
-                            Produk</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">
-                            Kategori & Merek</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">Tahun
-                            & Satuan</th>
+                        <x-table.sortable-th name="nama_barang" label="Info Produk" />
+                        <x-table.sortable-th name="merek" label="Merek" />
+                        <x-table.sortable-th name="tahun_perolehan" label="Tahun" />
+
                         <th class="px-6 py-3 text-right text-xs font-bold text-indigo-800 uppercase tracking-wider">Aksi
                         </th>
                     </tr>
@@ -78,21 +99,22 @@
 
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <a href="{{ route('barang.edit', $b->id) }}"
-                                    class="text-indigo-600 hover:text-indigo-900 mr-3 inline-flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                    Edit
-                                </a>
+                                    class="text-indigo-600 hover:text-indigo-900 mr-3 font-semibold">Edit</a>
+
                                 <x-forms.delete-button :action="route('barang.destroy', $b->id)" />
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="4" class="px-6 py-10 text-center text-gray-500">
-                                Belum ada data barang.
+                                <div class="flex flex-col items-center justify-center">
+                                    <svg class="w-10 h-10 text-gray-300 mb-2" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                    </svg>
+                                    <p>Tidak ada data yang cocok dengan filter/pencarian.</p>
+                                </div>
                             </td>
                         </tr>
                     @endforelse

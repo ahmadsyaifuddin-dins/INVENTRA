@@ -2,63 +2,100 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barang;
+use App\Models\Penempatan;
+use App\Models\Ruangan;
 use Illuminate\Http\Request;
 
 class PenempatanController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Tampilkan riwayat distribusi.
      */
     public function index()
     {
-        //
+        // Eager loading barang & ruangan biar query cepat
+        $penempatans = Penempatan::with(['barang', 'ruangan'])->latest()->paginate(10);
+
+        return view('penempatan.index', compact('penempatans'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Form distribusi baru.
      */
     public function create()
     {
-        //
+        // Siapkan data untuk Dropdown
+        // Format: [id => "Kode - Nama Barang"]
+        $barangs = Barang::all()->mapWithKeys(function ($item) {
+            return [$item->id => $item->kode_barang.' - '.$item->nama_barang];
+        });
+
+        $ruangans = Ruangan::pluck('nama_ruangan', 'id');
+
+        $penempatan = new Penempatan;
+
+        return view('penempatan.create', compact('penempatan', 'barangs', 'ruangans'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Simpan transaksi.
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'barang_id' => 'required|exists:barang,id',
+            'ruangan_id' => 'required|exists:ruangan,id',
+            'jumlah' => 'required|integer|min:1',
+            'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Berat',
+        ]);
+
+        Penempatan::create($request->all());
+
+        return redirect()->route('penempatan.index')
+            ->with('success', 'Aset berhasil didistribusikan ke ruangan!');
     }
 
     /**
-     * Display the specified resource.
+     * Form edit transaksi (Misal: Pindah ruangan atau update kondisi).
      */
-    public function show(string $id)
+    public function edit(Penempatan $penempatan)
     {
-        //
+        $barangs = Barang::all()->mapWithKeys(function ($item) {
+            return [$item->id => $item->kode_barang.' - '.$item->nama_barang];
+        });
+
+        $ruangans = Ruangan::pluck('nama_ruangan', 'id');
+
+        return view('penempatan.edit', compact('penempatan', 'barangs', 'ruangans'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update transaksi.
      */
-    public function edit(string $id)
+    public function update(Request $request, Penempatan $penempatan)
     {
-        //
+        $request->validate([
+            'barang_id' => 'required|exists:barang,id',
+            'ruangan_id' => 'required|exists:ruangan,id',
+            'jumlah' => 'required|integer|min:1',
+            'kondisi' => 'required|in:Baik,Rusak Ringan,Rusak Berat',
+        ]);
+
+        $penempatan->update($request->all());
+
+        return redirect()->route('penempatan.index')
+            ->with('success', 'Data distribusi berhasil diperbarui!');
     }
 
     /**
-     * Update the specified resource in storage.
+     * Hapus / Batalkan distribusi.
      */
-    public function update(Request $request, string $id)
+    public function destroy(Penempatan $penempatan)
     {
-        //
-    }
+        $penempatan->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('penempatan.index')
+            ->with('success', 'Data distribusi berhasil dihapus (Aset ditarik kembali).');
     }
 }

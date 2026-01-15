@@ -2,63 +2,86 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ruangan;
 use Illuminate\Http\Request;
 
 class RuanganController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Tampilkan daftar ruangan.
      */
     public function index()
     {
-        //
+        // Kita ambil data ruangan + hitung berapa kali ruangan ini dipakai di tabel penempatan
+        // withCount('penempatans') akan otomatis membuat field 'penempatans_count'
+        $ruangans = Ruangan::withCount('penempatans')->latest()->paginate(10);
+
+        return view('ruangan.index', compact('ruangans'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Form tambah.
      */
     public function create()
     {
-        //
+        $ruangan = new Ruangan; // Object kosong untuk _form
+
+        return view('ruangan.create', compact('ruangan'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Simpan data.
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama_ruangan' => 'required|string|max:50',
+            'penanggung_jawab' => 'required|string|max:100',
+        ]);
+
+        Ruangan::create($request->all());
+
+        return redirect()->route('ruangan.index')
+            ->with('success', 'Ruangan baru berhasil ditambahkan!');
     }
 
     /**
-     * Display the specified resource.
+     * Form edit.
      */
-    public function show(string $id)
+    public function edit(Ruangan $ruangan)
     {
-        //
+        return view('ruangan.edit', compact('ruangan'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update data.
      */
-    public function edit(string $id)
+    public function update(Request $request, Ruangan $ruangan)
     {
-        //
+        $request->validate([
+            'nama_ruangan' => 'required|string|max:50',
+            'penanggung_jawab' => 'required|string|max:100',
+        ]);
+
+        $ruangan->update($request->all());
+
+        return redirect()->route('ruangan.index')
+            ->with('success', 'Data ruangan berhasil diperbarui!');
     }
 
     /**
-     * Update the specified resource in storage.
+     * Hapus data.
      */
-    public function update(Request $request, string $id)
+    public function destroy(Ruangan $ruangan)
     {
-        //
-    }
+        // Cek apakah ruangan ini sedang dipakai menyimpan barang?
+        if ($ruangan->penempatans()->count() > 0) {
+            return back()->with('error', 'Gagal hapus! Masih ada aset yang tersimpan di ruangan ini.');
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $ruangan->delete();
+
+        return redirect()->route('ruangan.index')
+            ->with('success', 'Ruangan berhasil dihapus.');
     }
 }
