@@ -2,63 +2,106 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barang;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class BarangController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        // Eager loading kategori biar query ringan
+        $barangs = Barang::with('kategori')->latest()->paginate(10);
+
+        return view('barang.index', compact('barangs'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        // Ambil list kategori buat dropdown (id => nama_kategori)
+        $kategoris = Kategori::pluck('nama_kategori', 'id');
+        $barang = new Barang;
+
+        return view('barang.create', compact('barang', 'kategoris'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'kode_barang' => 'required|string|unique:barang,kode_barang',
+            'nama_barang' => 'required|string|max:100',
+            'kategori_id' => 'required|exists:kategori,id',
+            'merek' => 'nullable|string|max:50',
+            'tahun_perolehan' => 'required|digits:4|integer|min:2000|max:'.(date('Y') + 1),
+            'satuan' => 'required|string|max:20',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi file
+        ]);
+
+        $data = $request->all();
+
+        // LOGIC UPLOAD FOTO (Public Folder)
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('uploads/barang'), $filename);
+            $data['foto'] = $filename;
+        }
+
+        Barang::create($data);
+
+        return redirect()->route('barang.index')->with('success', 'Data barang berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Barang $barang)
     {
-        //
+        $kategoris = Kategori::pluck('nama_kategori', 'id');
+
+        return view('barang.edit', compact('barang', 'kategoris'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Barang $barang)
     {
-        //
+        $request->validate([
+            'kode_barang' => 'required|string|unique:barang,kode_barang,'.$barang->id,
+            'nama_barang' => 'required|string|max:100',
+            'kategori_id' => 'required|exists:kategori,id',
+            'merek' => 'nullable|string|max:50',
+            'tahun_perolehan' => 'required|digits:4',
+            'satuan' => 'required|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        $data = $request->all();
+
+        // LOGIC GANTI FOTO
+        if ($request->hasFile('foto')) {
+            // 1. Hapus foto lama jika ada
+            if ($barang->foto && File::exists(public_path('uploads/barang/'.$barang->foto))) {
+                File::delete(public_path('uploads/barang/'.$barang->foto));
+            }
+
+            // 2. Upload foto baru
+            $file = $request->file('foto');
+            $filename = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('uploads/barang'), $filename);
+            $data['foto'] = $filename;
+        }
+
+        $barang->update($data);
+
+        return redirect()->route('barang.index')->with('success', 'Data barang berhasil diperbarui!');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Barang $barang)
     {
-        //
-    }
+        // Hapus file fisik foto sebelum hapus data
+        if ($barang->foto && File::exists(public_path('uploads/barang/'.$barang->foto))) {
+            File::delete(public_path('uploads/barang/'.$barang->foto));
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $barang->delete();
+
+        return redirect()->route('barang.index')->with('success', 'Barang berhasil dihapus.');
     }
 }
