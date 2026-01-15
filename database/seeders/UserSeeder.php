@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
         DB::table('pengguna')->insert([
             'username' => 'pegawai',
             'password' => Hash::make('password'),
-            'nama_lengkap' => 'Liza Anak Magang',
+            'nama_lengkap' => 'Liza',
             'role' => 'Pegawai',
             'created_at' => now(),
             'updated_at' => now(),

@@ -1,22 +1,32 @@
 <?php
 
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PenempatanController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RuanganController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Grup Route yang butuh Login
+Route::middleware(['auth', 'verified'])->group(function () {
 
-Route::middleware('auth')->group(function () {
-    Route::view('about', 'about')->name('about');
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('users', [UserController::class, 'index'])->name('users.index');
+    // Master Data (Resource otomatis bikin route index, create, store, edit, update, destroy)
+    Route::resource('kategori', KategoriController::class);
+    Route::resource('ruangan', RuanganController::class);
+    Route::resource('barang', BarangController::class);
 
+    // Transaksi
+    Route::resource('penempatan', PenempatanController::class);
+
+    // Profile Bawaan
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
