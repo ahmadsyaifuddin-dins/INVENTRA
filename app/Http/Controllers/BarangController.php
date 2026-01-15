@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use App\Models\Kategori;
+use App\Models\User;
+use App\Notifications\BarangMasukNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Notification;
 
 class BarangController extends Controller
 {
@@ -55,8 +58,15 @@ class BarangController extends Controller
         }
 
         Barang::create($data);
+        $barangBaru = Barang::where('kode_barang', $request->kode_barang)->first();
 
-        return redirect()->route('barang.index')->with('success', 'Data barang berhasil ditambahkan!');
+        // Ambil semua user Pimpinan
+        $pimpimans = User::where('role', 'Pimpinan')->get();
+
+        // Kirim Notifikasi
+        Notification::send($pimpimans, new BarangMasukNotification($barangBaru, auth()->user()));
+
+        return redirect()->route('barang.index')->with('success', 'Data barang berhasil ditambahkan dan Notifikasi dikirim ke Pimpinan!');
     }
 
     public function edit(Barang $barang)

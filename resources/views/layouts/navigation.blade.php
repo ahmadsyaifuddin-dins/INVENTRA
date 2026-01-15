@@ -21,11 +21,10 @@
         </div>
     </div>
 
-    <nav class="mt-5 px-4 space-y-1">
+    <nav class="mt-5 px-4 space-y-1 pb-6">
 
         <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')"
             class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-indigo-700 text-white shadow-md ring-1 ring-indigo-600' : 'text-indigo-100 hover:bg-indigo-800/50 hover:text-white' }}">
-
             <x-slot name="icon">
                 <svg class="h-5 w-5 mr-3 {{ request()->routeIs('dashboard') ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-200' }}"
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -42,14 +41,16 @@
             Master Data
         </div>
 
-        <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.*')"
-            class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('users.*') ? 'bg-indigo-700 text-white shadow-md ring-1 ring-indigo-600' : 'text-indigo-100 hover:bg-indigo-800/50 hover:text-white' }}">
-            <x-slot name="icon">
-                <i
-                    class="fa-solid fa-user mr-3 {{ request()->routeIs('users.*') ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-200' }}"></i>
-            </x-slot>
-            {{ __('Data Pengguna') }}
-        </x-nav-link>
+        @if (Auth::user()->role === 'Pegawai')
+            <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.*')"
+                class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('users.*') ? 'bg-indigo-700 text-white shadow-md ring-1 ring-indigo-600' : 'text-indigo-100 hover:bg-indigo-800/50 hover:text-white' }}">
+                <x-slot name="icon">
+                    <i
+                        class="fa-solid fa-user mr-3 {{ request()->routeIs('users.*') ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-200' }}"></i>
+                </x-slot>
+                {{ __('Data Pengguna') }}
+            </x-nav-link>
+        @endif
 
         <x-nav-link href="{{ route('kategori.index') }}" :active="request()->routeIs('kategori.*')"
             class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('kategori.*') ? 'bg-indigo-700 text-white shadow-md ring-1 ring-indigo-600' : 'text-indigo-100 hover:bg-indigo-800/50 hover:text-white' }}">
@@ -62,7 +63,6 @@
             </x-slot>
             {{ __('Data Kategori') }}
         </x-nav-link>
-
 
         <x-nav-link href="{{ route('barang.index') }}" :active="request()->routeIs('barang.*')"
             class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('barang.*') ? 'bg-indigo-700 text-white shadow-md ring-1 ring-indigo-600' : 'text-indigo-100 hover:bg-indigo-800/50 hover:text-white' }}">
