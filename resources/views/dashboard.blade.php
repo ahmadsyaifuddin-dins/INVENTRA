@@ -47,7 +47,7 @@
     @endpush
 
     <x-slot name="header">
-        {{ __('Dashboard Overview') }}
+        {{ __('Beranda') }}
     </x-slot>
 
     <x-dashboard.welcome-banner :user="Auth::user()" />

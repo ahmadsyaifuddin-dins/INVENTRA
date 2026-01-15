@@ -35,7 +35,7 @@
                         d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
                 </svg>
             </x-slot>
-            {{ __('Dashboard') }}
+            {{ __('Beranda') }}
         </x-nav-link>
 
         <div class="px-4 mt-8 mb-2 text-xs font-bold text-indigo-400 uppercase tracking-widest opacity-80">
@@ -102,6 +102,18 @@
                 </svg>
             </x-slot>
             {{ __('Distribusi Aset') }}
+        </x-nav-link>
+
+        <x-nav-link href="{{ route('laporan.index') }}" :active="request()->routeIs('laporan.*')"
+            class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('laporan.*') ? 'bg-indigo-700 text-white shadow-md ring-1 ring-indigo-600' : 'text-indigo-100 hover:bg-indigo-800/50 hover:text-white' }}">
+            <x-slot name="icon">
+                <svg class="h-5 w-5 mr-3 {{ request()->routeIs('laporan.*') ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-200' }}"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </x-slot>
+            {{ __('Laporan') }}
         </x-nav-link>
 
     </nav>
