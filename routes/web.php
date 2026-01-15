@@ -8,6 +8,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PenempatanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RuanganController;
+use App\Http\Controllers\StockOpnameController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +54,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
     Route::get('/penempatan', [PenempatanController::class, 'index'])->name('penempatan.index');
 
+    // Index & Show & Print boleh diakses Pimpinan juga
+    Route::get('/opname', [StockOpnameController::class, 'index'])->name('opname.index');
+    Route::get('/opname/{opname}', [StockOpnameController::class, 'show'])
+        ->name('opname.show')
+        ->whereNumber('opname');
+    Route::get('/opname/{opname}/print', [StockOpnameController::class, 'print'])
+        ->name('opname.print')
+        ->whereNumber('opname');
+
     // ====================================================
     // 2. AKSES KHUSUS (HANYA PEGAWAI)
     // Middleware 'role:Pegawai' menjaga route ini
@@ -71,6 +81,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // CRUD Transaksi
         Route::resource('penempatan', PenempatanController::class)->except(['index', 'show']);
+
+        Route::get('/opname/create', [StockOpnameController::class, 'create'])->name('opname.create');
+        Route::get('/opname/formulir', [StockOpnameController::class, 'formulir'])->name('opname.formulir');
+        Route::post('/opname', [StockOpnameController::class, 'store'])->name('opname.store');
     });
 
 });

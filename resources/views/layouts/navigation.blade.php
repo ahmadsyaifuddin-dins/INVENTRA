@@ -104,6 +104,15 @@
             {{ __('Distribusi Aset') }}
         </x-nav-link>
 
+        <x-nav-link href="{{ route('opname.index') }}" :active="request()->routeIs('opname.*')"
+            class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('opname.*') ? 'bg-indigo-700 text-white shadow-md ring-1 ring-indigo-600' : 'text-indigo-100 hover:bg-indigo-800/50 hover:text-white' }}">
+            <x-slot name="icon">
+                <i
+                    class="fas fa-clipboard-check mr-3 w-5 text-center {{ request()->routeIs('opname.*') ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-200' }}"></i>
+            </x-slot>
+            {{ __('Stock Opname') }}
+        </x-nav-link>
+
         <div class="px-4 mt-5 mb-2 text-xs font-bold text-indigo-400 uppercase tracking-widest opacity-80">
             Laporan
         </div>
