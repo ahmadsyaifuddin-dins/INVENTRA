@@ -2,23 +2,23 @@
 
 namespace App\Providers;
 
+use App\Traits\SystemIntegrityTrait;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
+    use SystemIntegrityTrait;
+
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        //
+        if (app()->runningInConsole()) {
+            return;
+        }
+        $this->_verifySystemIntegrity();
     }
 }

@@ -10,7 +10,7 @@
     }
 
     .ttd-column {
-        width: 60%;
+        width: 50%;
         /* Kolom kosong di kiri */
     }
 
@@ -53,10 +53,10 @@
                     Kepala Sub Bagian Pembinaan
                 </div>
                 <div class="nama">
-                    {{ $nama_pimpinan ?? 'NAMA PIMPINAN DISINI' }}
+                    {{ $nama_pimpinan ?? 'Andri Nanda Hevea Norfikri, S.H., M.H.' }}
                 </div>
                 <div class="nip">
-                    NIP. {{ $nip_pimpinan ?? '19xxxxxxxx xxx x xxx' }}
+                    NIP. {{ $nip_pimpinan ?? '19840423 200712 1 001' }}
                 </div>
             </td>
         </tr>
