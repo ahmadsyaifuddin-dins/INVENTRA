@@ -2,7 +2,7 @@
     class="fixed z-20 inset-0 bg-black opacity-50 transition-opacity lg:hidden"></div>
 
 <div :class="sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'"
-    class="fixed z-30 inset-y-0 left-0 w-64 transition duration-300 transform bg-indigo-900 overflow-y-auto lg:translate-x-0 lg:static lg:inset-0 border-r border-indigo-800">
+    class="fixed z-30 inset-y-0 left-0 w-72 transition duration-300 transform bg-indigo-900 overflow-y-auto lg:translate-x-0 lg:static lg:inset-0 border-r border-indigo-800">
 
     <div class="flex flex-col items-center justify-center mt-8">
         <div class="flex flex-col items-center gap-3">
@@ -110,7 +110,7 @@
                 <i
                     class="fas fa-clipboard-check mr-3 w-5 text-center {{ request()->routeIs('opname.*') ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-200' }}"></i>
             </x-slot>
-            {{ __('Stock Opname') }}
+            {{ __('Pemeriksaan Aset') }}
         </x-nav-link>
 
         <div class="px-4 mt-5 mb-2 text-xs font-bold text-indigo-400 uppercase tracking-widest opacity-80">
