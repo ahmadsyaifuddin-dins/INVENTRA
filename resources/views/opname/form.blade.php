@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="header">{{ __('Lembar Kerja Stock Opname') }}</x-slot>
+    <x-slot name="header">{{ __('Lembar Kerja Pemeriksaan Aset') }}</x-slot>
 
     <form action="{{ route('opname.store') }}" method="POST">
         @csrf

@@ -1,11 +1,11 @@
 <x-app-layout>
-    <x-slot name="header">{{ __('Riwayat Stock Opname') }}</x-slot>
+    <x-slot name="header">{{ __('Riwayat Pemeriksaan Aset') }}</x-slot>
 
     @if (auth()->user()->role === 'Pegawai')
         <div class="mb-6 text-right">
             <a href="{{ route('opname.create') }}"
                 class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">
-                + Mulai Stock Opname Baru
+                + Mulai Periksa Aset
             </a>
         </div>
     @endif

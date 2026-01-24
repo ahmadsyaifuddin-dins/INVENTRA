@@ -1,7 +1,7 @@
 @extends('laporan.pdf.layout')
 
-@section('title', 'Berita Acara Stock Opname')
-@section('judul_laporan', 'BERITA ACARA STOCK OPNAME')
+@section('title', 'Berita Acara Pemeriksaan Aset')
+@section('judul_laporan', 'BERITA ACARA PEMERIKSAAN ASET')
 
 @section('periode')
     <div style="text-align: center; margin-bottom: 20px;">

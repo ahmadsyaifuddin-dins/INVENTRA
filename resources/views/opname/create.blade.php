@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="header">{{ __('Mulai Stock Opname') }}</x-slot>
+    <x-slot name="header">{{ __('Mulai Periksa Aset') }}</x-slot>
 
     <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-gray-100">
         <h2 class="text-lg font-bold mb-4">Langkah 1: Tentukan Lokasi & Waktu</h2>

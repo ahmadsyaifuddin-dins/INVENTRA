@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="header">{{ __('Detail Hasil Stock Opname') }}</x-slot>
+    <x-slot name="header">{{ __('Detail Hasil Pemeriksaan Aset') }}</x-slot>
 
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
