@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>INVENTRA - Kejaksaan Negeri Banjarmasinnnnnnnnnnn</title>
+    <title>INVENTRA - Kejaksaan Negeri Banjarmasin</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -45,16 +45,24 @@
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center">
             <div class="w-full lg:w-1/2 text-center lg:text-left mb-10 lg:mb-0">
+
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-wide uppercase mb-6 drop-shadow-md">
+                    Kejaksaan Negeri Banjarmasin
+                </h2>
                 <span
-                    class="inline-block py-1 px-3 rounded bg-indigo-800 text-indigo-100 text-xs font-bold tracking-widest mb-4">SISTEM
-                    INFORMASI MANAJEMEN ASET</span>
+                    class="inline-block py-1 px-3 rounded bg-indigo-800 text-indigo-100 text-xs font-bold tracking-widest mb-4 border border-indigo-700">
+                    SISTEM INFORMASI MANAJEMEN ASET
+                </span>
+
                 <h1 class="text-4xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
                     Kelola Inventaris <br> <span class="text-yellow-400">Lebih Efisien.</span>
                 </h1>
+
                 <p class="text-lg text-indigo-200 mb-8 max-w-2xl mx-auto lg:mx-0">
-                    Aplikasi resmi pengelolaan data barang milik negara pada Kejaksaan Negeri Banjarmasin. Memudahkan
-                    pencatatan, penempatan, dan pelaporan aset.
+                    Aplikasi resmi pengelolaan data barang milik negara. Memudahkan pencatatan, penempatan, dan
+                    pelaporan aset secara terintegrasi.
                 </p>
+
                 <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                     <a href="#fitur"
                         class="px-8 py-3 text-base font-bold text-indigo-900 bg-white rounded-lg hover:bg-gray-100 transition shadow-lg">
@@ -66,9 +74,74 @@
                     </a>
                 </div>
             </div>
+
             <div class="w-full lg:w-1/2 lg:pl-10">
                 <img src="{{ asset('img/gedung.png') }}" alt="Dashboard Preview"
                     class="rounded-xl shadow-2xl border-4 border-indigo-500/30 transform rotate-2 hover:rotate-0 transition duration-500">
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-gray-50 border-b border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="text-center mb-12">
+                <span class="text-indigo-600 font-semibold tracking-wide uppercase text-sm">Landasan Kerja</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-2">
+                    Visi & Misi
+                </h2>
+                <div class="w-20 h-1.5 bg-yellow-400 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-1 gap-10">
+                <div
+                    class="bg-white p-8 rounded-2xl shadow-md border-t-4 border-indigo-900 text-center relative overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-yellow-100 rounded-full opacity-50 blur-xl">
+                    </div>
+
+                    <h3
+                        class="text-2xl font-bold text-indigo-900 mb-4 inline-block border-b-2 border-yellow-400 pb-1 relative z-10">
+                        VISI</h3>
+                    <p class="text-xl text-gray-700 font-medium leading-relaxed italic relative z-10">
+                        "Mewujudkan Aparat Penegak Hukum Kejaksaan Negeri Banjarmasin yang Profesional, Proporsional dan
+                        Akuntabel"
+                    </p>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-md border-t-4 border-indigo-900 relative">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold text-indigo-900 inline-block border-b-2 border-yellow-400 pb-1">
+                            MISI</h3>
+                    </div>
+                    <ul class="space-y-4 text-gray-700 text-md leading-relaxed list-none">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Meningkatkan peran Kejaksaan Negeri Banjarmasin dalam Program Pencegahan Tindak
+                                Pidana;</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Meningkatkan profesionalisme Jaksa Kejaksaan Negeri Banjarmasin dalam Penanganan
+                                Perkara Tindak Pidana;</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Meningkatkan peran Jaksa Pengacara Negara Kejaksaan Negeri Banjarmasin dalam
+                                penyelesaian masalah Perdata dan Tata Usaha Negara;</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Mewujudkan upaya penegakkan hukum Kejaksaan Negeri Banjarmasin yang memenuhi rasa
+                                keadilan masyarakat;</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-600 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Mempercepat pelaksanaan reformasi birokrasi dan tata kelola Kejaksaan Negeri
+                                Banjarmasin, yang bersih dan bebas KKN.</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </section>
@@ -81,25 +154,27 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-lg transition">
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mb-6">
+                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-lg transition group">
+                    <div
+                        class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition">
                         <i class="fas fa-box-open fa-lg"></i>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Pendataan Digital</h3>
                     <p class="text-gray-600">Digitalisasi data barang masuk, kondisi fisik, hingga spesifikasi teknis
                         secara terperinci.</p>
                 </div>
-                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-lg transition group">
                     <div
-                        class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600 mb-6">
+                        class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600 mb-6 group-hover:bg-emerald-600 group-hover:text-white transition">
                         <i class="fas fa-map-marked-alt fa-lg"></i>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Tracking Lokasi</h3>
                     <p class="text-gray-600">Monitoring distribusi aset ke setiap ruangan. Mengetahui posisi aset secara
                         realtime.</p>
                 </div>
-                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-lg transition">
-                    <div class="w-12 h-12 bg-rose-100 rounded-lg flex items-center justify-center text-rose-600 mb-6">
+                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-lg transition group">
+                    <div
+                        class="w-12 h-12 bg-rose-100 rounded-lg flex items-center justify-center text-rose-600 mb-6 group-hover:bg-rose-600 group-hover:text-white transition">
                         <i class="fas fa-file-pdf fa-lg"></i>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Pelaporan Otomatis</h3>
