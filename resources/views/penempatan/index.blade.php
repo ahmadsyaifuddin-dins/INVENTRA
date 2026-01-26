@@ -38,7 +38,7 @@
         </x-slot>
     </x-table.search-header>
 
-    @if (auth()->user()->role === 'Pegawai')
+    @can('manage-barang')
         <div class="mb-4 text-right">
             <a href="{{ route('penempatan.create') }}"
                 class="inline-flex bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition items-center gap-2 text-sm">
@@ -48,7 +48,7 @@
                 Tambah Distribusi
             </a>
         </div>
-    @endif
+    @endcan
 
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
         <div class="overflow-x-auto">
@@ -64,11 +64,11 @@
                         <x-table.sortable-th name="kondisi" label="Kondisi" />
                         <x-table.sortable-th name="created_at" label="Tanggal" />
 
-                        @if (auth()->user()->role === 'Pegawai')
+                        @can('manage-barang')
                             <th class="px-6 py-3 text-right text-xs font-bold text-indigo-800 uppercase tracking-wider">
                                 Aksi
                             </th>
-                        @endif
+                        @endcan
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -138,12 +138,12 @@
                                 {{ $p->created_at->format('d M Y') }}
                             </td>
 
-                            @if (auth()->user()->role === 'Pegawai')
+                            @can('manage-barang')
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <a href="{{ route('penempatan.edit', $p->id) }}"
                                         class="text-indigo-600 hover:text-indigo-900 mr-3 font-semibold inline-flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
                                             </path>
@@ -152,7 +152,7 @@
                                     </a>
                                     <x-forms.delete-button :action="route('penempatan.destroy', $p->id)" />
                                 </td>
-                            @endif
+                            @endcan
                         </tr>
                     @empty
                         <tr>

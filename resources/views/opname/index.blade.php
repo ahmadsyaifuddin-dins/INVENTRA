@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">{{ __('Riwayat Pemeriksaan Aset') }}</x-slot>
 
-    @if (auth()->user()->role === 'Pegawai')
+    @can('manage-barang')
         <div class="mb-6 text-right">
             <a href="{{ route('opname.create') }}"
                 class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">
                 + Mulai Periksa Aset
             </a>
         </div>
-    @endif
+    @endcan
 
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-100">
         <table class="min-w-full divide-y divide-gray-200">
