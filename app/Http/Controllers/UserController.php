@@ -39,14 +39,15 @@ class UserController extends Controller
         $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:50', 'unique:pengguna'],
+            'email' => ['nullable', 'email', 'unique:pengguna'],
             'password' => ['required', 'string', 'min:6'],
-            // UPDATE VALIDASI ROLE: Tambahkan Administrator dan Gudang
             'role' => ['required', 'in:Administrator,Pegawai,Gudang,Pimpinan'],
         ]);
 
         User::create([
             'nama_lengkap' => $request->nama_lengkap,
             'username' => $request->username,
+            'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
         ]);
@@ -70,6 +71,7 @@ class UserController extends Controller
         $rules = [
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:50', 'unique:pengguna,username,'.$user->id],
+            'email' => ['nullable', 'email', 'unique:pengguna,email,'.$user->id],
             // UPDATE VALIDASI ROLE DISINI JUGA
             'role' => ['required', 'in:Administrator,Pegawai,Gudang,Pimpinan'],
         ];
@@ -84,6 +86,7 @@ class UserController extends Controller
         $data = [
             'nama_lengkap' => $request->nama_lengkap,
             'username' => $request->username,
+            'email' => $request->email,
             'role' => $request->role,
         ];
 

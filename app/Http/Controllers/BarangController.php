@@ -57,16 +57,17 @@ class BarangController extends Controller
             $data['foto'] = $filename;
         }
 
-        Barang::create($data);
-        $barangBaru = Barang::where('kode_barang', $request->kode_barang)->first();
+        // Simpan Barang
+        $barang = Barang::create($data); // Langsung tampung ke variabel $barang
 
-        // Ambil semua user Pimpinan
-        $pimpimans = User::where('role', 'Pimpinan')->get();
+        // TARGET NOTIFIKASI: Administrator, Pegawai, Pimpinan
+        $recipients = User::whereIn('role', ['Administrator', 'Pegawai', 'Pimpinan'])->get();
 
-        // Kirim Notifikasi
-        Notification::send($pimpimans, new BarangMasukNotification($barangBaru, auth()->user()));
+        // Kirim Notifikasi (Email & Database)
+        // Pastikan user penerima punya email yang valid di database!
+        Notification::send($recipients, new BarangMasukNotification($barang, auth()->user()));
 
-        return redirect()->route('barang.index')->with('success', 'Data barang berhasil ditambahkan dan Notifikasi dikirim ke Pimpinan!');
+        return redirect()->route('barang.index')->with('success', 'Data barang berhasil ditambahkan. Notifikasi email telah dikirim ke pihak terkait.');
     }
 
     public function edit(Barang $barang)

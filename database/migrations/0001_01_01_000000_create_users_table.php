@@ -12,9 +12,9 @@ return new class extends Migration
         Schema::create('pengguna', function (Blueprint $table) {
             $table->id();
             $table->string('username')->unique();
+            $table->string('email')->nullable()->unique();
             $table->string('password');
             $table->string('nama_lengkap');
-            // Role sekarang ada 4
             $table->enum('role', ['Administrator', 'Pegawai', 'Gudang', 'Pimpinan'])->default('Pegawai');
             $table->rememberToken();
             $table->timestamps();

@@ -16,8 +16,9 @@ class UserSeeder extends Seeder
         // 1. Akun Administrator
         DB::table('pengguna')->insert([
             'username' => 'admin',
+            'email' => 'lizainventra@gmail.com',
             'nama_lengkap' => 'Administrator Sistem',
-            'password' => Hash::make('password'), // Password default: password
+            'password' => Hash::make('password'),
             'role' => 'Administrator',
             'created_at' => now(),
             'updated_at' => now(),
