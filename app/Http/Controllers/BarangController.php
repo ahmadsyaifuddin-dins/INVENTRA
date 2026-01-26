@@ -110,6 +110,12 @@ class BarangController extends Controller
         return redirect()->route('barang.index')->with('success', 'Data barang berhasil diperbarui!');
     }
 
+    public function show(Barang $barang)
+    {
+        // Pastikan view-nya nanti bernama 'barang.show'
+        return view('barang.show', compact('barang'));
+    }
+
     public function destroy(Barang $barang)
     {
         // Hapus file fisik foto sebelum hapus data
