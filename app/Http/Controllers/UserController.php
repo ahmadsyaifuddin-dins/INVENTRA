@@ -13,7 +13,6 @@ class UserController extends Controller
      */
     public function index()
     {
-        // Ganti query lama dengan filter()
         $users = User::latest()
             ->filter(request()->all())
             ->paginate(10)
@@ -27,7 +26,6 @@ class UserController extends Controller
      */
     public function create()
     {
-        // Kita kirim object User kosong agar _form.blade.php tidak error saat cek value
         $user = new User;
 
         return view('users.create', compact('user'));
@@ -42,7 +40,8 @@ class UserController extends Controller
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:50', 'unique:pengguna'],
             'password' => ['required', 'string', 'min:6'],
-            'role' => ['required', 'in:Pegawai,Pimpinan'],
+            // UPDATE VALIDASI ROLE: Tambahkan Administrator dan Gudang
+            'role' => ['required', 'in:Administrator,Pegawai,Gudang,Pimpinan'],
         ]);
 
         User::create([
@@ -71,10 +70,11 @@ class UserController extends Controller
         $rules = [
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:50', 'unique:pengguna,username,'.$user->id],
-            'role' => ['required', 'in:Pegawai,Pimpinan'],
+            // UPDATE VALIDASI ROLE DISINI JUGA
+            'role' => ['required', 'in:Administrator,Pegawai,Gudang,Pimpinan'],
         ];
 
-        // Password opsional saat update (kalau kosong berarti tidak diganti)
+        // Password opsional saat update
         if ($request->filled('password')) {
             $rules['password'] = ['min:6'];
         }
@@ -101,6 +101,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        // Opsional: Cegah menghapus diri sendiri agar admin tidak terkunci
+        if (auth()->id() === $user->id) {
+            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
         $user->delete();
 
         return redirect()->route('users.index')->with('success', 'Pengguna berhasil dihapus.');

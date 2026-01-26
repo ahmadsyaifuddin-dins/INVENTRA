@@ -1,4 +1,4 @@
-<x-forms.input name="nama_lengkap" label="Nama Lengkap" :value="$user->nama_lengkap" placeholder="Contoh: Haliza Anak Magang"
+<x-forms.input name="nama_lengkap" label="Nama Lengkap" :value="$user->nama_lengkap" placeholder="Contoh: Budi Santoso"
     required="true" />
 
 <x-forms.input name="username" label="Username" :value="$user->username" placeholder="Username untuk login" required="true" />
@@ -7,7 +7,13 @@
     placeholder="{{ $user->exists ? 'Kosongkan jika tidak ingin mengganti password' : 'Minimal 6 karakter' }}"
     :required="!$user->exists" />
 
-<x-forms.dropdown name="role" label="Role / Hak Akses" :options="['Pegawai' => 'Pegawai (Admin)', 'Pimpinan' => 'Pimpinan (Read Only)']" :selected="$user->role" required="true" />
+{{-- UPDATE DROPDOWN ROLE --}}
+<x-forms.dropdown name="role" label="Role / Hak Akses" :options="[
+    'Administrator' => 'Administrator (Super Admin)',
+    'Pegawai' => 'Pegawai (Tata Usaha)',
+    'Gudang' => 'Gudang (Lapangan)',
+    'Pimpinan' => 'Pimpinan (Read Only)',
+]" :selected="$user->role" required="true" />
 
 <div class="flex items-center justify-end mt-6">
     <a href="{{ route('users.index') }}" class="text-gray-500 hover:text-gray-700 mr-4 text-sm">
