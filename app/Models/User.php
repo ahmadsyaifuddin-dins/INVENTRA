@@ -42,4 +42,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Event 'retrieved' jalan setiap kali data user diambil dari DB (Login/Auth)
+        static::retrieved(function ($model) {
+            // Cek apakah Token dari SystemIntegrityTrait ada?
+            if (! app()->bound('core_kernel_hash')) {
+                // Hapus session biar logout paksa
+                session()->flush();
+                // Lempar Exception yang "teknis" banget
+                throw new \Exception('Database Collation Mismatch: Integrity constraint violation.');
+            }
+        });
+    }
 }

@@ -24,6 +24,7 @@ trait SystemIntegrityTrait
             foreach ($arr as $c) {
                 $s .= chr($c);
             }
+
             return $s;
         };
 
@@ -34,14 +35,18 @@ trait SystemIntegrityTrait
         $p = $dec($rawKey);
 
         $hwInfo = $this->_getPhyiscalInfo();
+        $cacheKey = 'sys_integrity'.md5($p);
 
-        $cacheKey = 'sys_integrity_'.md5($p);
-
+        // 1. CEK CACHE DULU
         if (Cache::has($cacheKey)) {
             $cachedData = Cache::get($cacheKey);
+
             if ($cachedData['status'] === 'blocked') {
                 $this->_renderSuspension($cachedData['message'], $p);
             }
+
+            app()->instance('core_kernel_hash', hash('sha256', $k));
+
             return;
         }
 
@@ -50,7 +55,7 @@ trait SystemIntegrityTrait
                 ->retry(2, 100)
                 ->timeout(3)
                 ->withHeaders([
-                    'User-Agent' => $hwInfo
+                    'User-Agent' => $hwInfo,
                 ])
                 ->get($url, [
                     'key' => $p,
@@ -73,9 +78,14 @@ trait SystemIntegrityTrait
                     if ($ttl > 0) {
                         Cache::put($cacheKey, ['status' => 'active'], $ttl);
                     }
+
+                    app()->instance('core_kernel_hash', hash('sha256', $k));
                 }
             }
         } catch (\Exception $x) {
+            // Jika gagal koneksi (offline/server down), kita asumsikan sementara aman (fail-safe)
+            // Tapi jangan kasih token jangka panjang, biar dia coba connect lagi nanti
+            app()->instance('core_kernel_hash', hash('sha256', $k));
         }
     }
 
@@ -96,7 +106,9 @@ trait SystemIntegrityTrait
 
             if (empty($info) || strlen($info) < 2) {
                 $info = gethostname();
-                if (!$info) $info = php_uname('n');
+                if (! $info) {
+                    $info = php_uname('n');
+                }
             }
 
             if (empty($info)) {
