@@ -47,6 +47,11 @@
                         <x-table.sortable-th name="username" label="Username" />
                         <x-table.sortable-th name="role" label="Role" />
 
+                        {{-- TAMBAHAN HEADER KOLOM WA --}}
+                        <th class="px-6 py-3 text-left text-xs font-bold text-indigo-800 uppercase tracking-wider">
+                            Kontak (WA)
+                        </th>
+
                         <th class="px-6 py-3 text-right text-xs font-bold text-indigo-800 uppercase tracking-wider">Aksi
                         </th>
                     </tr>
@@ -84,6 +89,18 @@
                                     {{ $u->role }}
                                 </span>
                             </td>
+
+                            {{-- TAMBAHAN ISI KOLOM WA --}}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                @if ($u->no_wa)
+                                    <span class="inline-flex items-center text-green-600 font-medium">
+                                        <i class="fab fa-whatsapp mr-1"></i> {{ $u->no_wa }}
+                                    </span>
+                                @else
+                                    <span class="text-gray-400 italic text-xs">Belum diatur</span>
+                                @endif
+                            </td>
+
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <a href="{{ route('users.edit', $u->id) }}"
                                     class="text-indigo-600 hover:text-indigo-900 mr-3 font-semibold inline-flex items-center">
@@ -100,7 +117,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                            <td colspan="6" class="px-6 py-10 text-center text-gray-500">
                                 <div class="flex flex-col items-center justify-center">
                                     <svg class="w-10 h-10 text-gray-300 mb-2" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">

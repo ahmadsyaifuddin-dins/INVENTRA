@@ -66,6 +66,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/opname/create', [StockOpnameController::class, 'create'])->name('opname.create');
         Route::get('/opname/formulir', [StockOpnameController::class, 'formulir'])->name('opname.formulir');
         Route::post('/opname', [StockOpnameController::class, 'store'])->name('opname.store');
+        Route::post('/barang/{barang}/remind', [BarangController::class, 'sendManualReminder'])->name('barang.remind');
     });
 
     // ====================================================

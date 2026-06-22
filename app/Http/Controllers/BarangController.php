@@ -45,6 +45,8 @@ class BarangController extends Controller
             'tahun_perolehan' => 'required|digits:4|integer|min:2000|max:'.(date('Y') + 1),
             'satuan' => 'required|string|max:20',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'tgl_penyusutan_habis' => 'nullable|date',
+            'tgl_servis_berikutnya' => 'nullable|date',
         ]);
 
         $data = $request->all();
@@ -87,6 +89,8 @@ class BarangController extends Controller
             'tahun_perolehan' => 'required|digits:4',
             'satuan' => 'required|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'tgl_penyusutan_habis' => 'nullable|date',
+            'tgl_servis_berikutnya' => 'nullable|date',
         ]);
 
         $data = $request->all();
@@ -126,5 +130,79 @@ class BarangController extends Controller
         $barang->delete();
 
         return redirect()->route('barang.index')->with('success', 'Barang berhasil dihapus.');
+    }
+
+    public function sendManualReminder(Barang $barang)
+    {
+        $admins = User::where('role', 'Administrator')->whereNotNull('no_wa')->get();
+
+        if ($admins->isEmpty()) {
+            return back()->with('error', 'Gagal! Tidak ada Administrator yang memiliki nomor WA.');
+        }
+
+        // 1. Cek status urgensi (Apakah ini Servis atau Penyusutan?)
+        $now = now()->startOfDay();
+        $servis = $barang->tgl_servis_berikutnya ? \Carbon\Carbon::parse($barang->tgl_servis_berikutnya)->startOfDay() : null;
+        $susut = $barang->tgl_penyusutan_habis ? \Carbon\Carbon::parse($barang->tgl_penyusutan_habis)->startOfDay() : null;
+
+        $isServis = $servis && $servis->greaterThanOrEqualTo($now) && $now->diffInDays($servis) <= 7;
+        $isSusut = $susut && $susut->greaterThanOrEqualTo($now) && $now->diffInDays($susut) <= 7;
+
+        // Bikin kalimat alasan
+        $alasan = [];
+        if ($isServis) {
+            $alasan[] = '🛠️ *Jadwal Servis Berkala* ('.$servis->format('d M Y').')';
+        }
+        if ($isSusut) {
+            $alasan[] = '📉 *Batas Masa Penyusutan* ('.$susut->format('d M Y').')';
+        }
+        $teksAlasan = implode(' dan ', $alasan);
+
+        // Jika diklik manual tapi ternyata bukan H-7 (Mungkin admin iseng pencet)
+        if (empty($alasan)) {
+            $teksAlasan = 'Pengecekan / Tindak Lanjut Umum';
+        }
+
+        $token = env('FONNTE_TOKEN');
+        $berhasil = 0;
+
+        foreach ($admins as $admin) {
+            // 2. Rangkai pesan di DALAM loop agar nama penerima dinamis
+            $pesan = "*[PENGINGAT SISTEM INVENTRA]*\n\n";
+            $pesan .= "Halo, *{$admin->nama_lengkap}* 👋\n";
+            $pesan .= "Sistem mendeteksi bahwa aset berikut memerlukan perhatian Anda karena mendekati $teksAlasan:\n\n";
+
+            $pesan .= "📦 *Nama Aset:* {$barang->nama_barang}\n";
+            $pesan .= "🔢 *Kode Aset:* {$barang->kode_barang}\n";
+            $pesan .= '🏷️ *Kategori:* '.($barang->kategori->nama_kategori ?? '-')."\n\n";
+
+            $pesan .= "💡 *Tindak Lanjut yang Disarankan:*\n";
+            if ($isServis) {
+                $pesan .= "✔️ Segera jadwalkan pemeliharaan/servis dengan teknisi agar kondisi aset tetap prima.\n";
+            }
+            if ($isSusut) {
+                $pesan .= "✔️ Lakukan cek fisik (Stok Opname) untuk menilai kelayakan aset untuk dihapuskan atau diperpanjang.\n";
+            }
+            if (empty($alasan)) {
+                $pesan .= "✔️ Mohon segera cek detail kondisi aset ini di aplikasi.\n";
+            }
+
+            $pesan .= "\n_Pesan ini dikirim secara manual via Aplikasi INVENTRA._";
+
+            // 3. Tembak ke Fonnte
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Authorization' => $token,
+            ])->post('https://api.fonnte.com/send', [
+                'target' => $admin->no_wa,
+                'message' => $pesan,
+                'countryCode' => '62',
+            ]);
+
+            if ($response->successful()) {
+                $berhasil++;
+            }
+        }
+
+        return back()->with('success', "Pengingat WA manual berhasil dikirim ke $berhasil Administrator.");
     }
 }

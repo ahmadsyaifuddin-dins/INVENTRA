@@ -71,6 +71,33 @@
                                         <dd class="mt-1 text-sm text-gray-900">
                                             {{ $barang->created_at->format('d M Y') }}</dd>
                                     </div>
+
+                                    {{-- TAMBAHAN: Data Tanggal Penyusutan & Servis --}}
+                                    <div class="sm:col-span-1">
+                                        <dt class="text-sm font-medium text-gray-500">Tgl Penyusutan Habis</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">
+                                            @if ($barang->tgl_penyusutan_habis)
+                                                <span class="bg-gray-100 px-2 py-1 rounded text-gray-700">
+                                                    {{ \Carbon\Carbon::parse($barang->tgl_penyusutan_habis)->format('d M Y') }}
+                                                </span>
+                                            @else
+                                                <span class="text-gray-400 italic">-</span>
+                                            @endif
+                                        </dd>
+                                    </div>
+                                    <div class="sm:col-span-1">
+                                        <dt class="text-sm font-medium text-gray-500">Jadwal Servis Berikutnya</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">
+                                            @if ($barang->tgl_servis_berikutnya)
+                                                <span class="bg-blue-50 px-2 py-1 rounded text-blue-700 font-medium">
+                                                    {{ \Carbon\Carbon::parse($barang->tgl_servis_berikutnya)->format('d M Y') }}
+                                                </span>
+                                            @else
+                                                <span class="text-gray-400 italic">-</span>
+                                            @endif
+                                        </dd>
+                                    </div>
+                                    {{-- END TAMBAHAN --}}
                                 </dl>
                             </div>
 
@@ -88,6 +115,63 @@
                                     </a>
                                 @endcan
                             </div>
+
+                            {{-- FITUR REMINDER WA MANUAL --}}
+                            @php
+                                $now = now()->startOfDay();
+                                $servis = $barang->tgl_servis_berikutnya
+                                    ? \Carbon\Carbon::parse($barang->tgl_servis_berikutnya)->startOfDay()
+                                    : null;
+                                $susut = $barang->tgl_penyusutan_habis
+                                    ? \Carbon\Carbon::parse($barang->tgl_penyusutan_habis)->startOfDay()
+                                    : null;
+
+                                $h7Servis =
+                                    $servis && $servis->greaterThanOrEqualTo($now) && $now->diffInDays($servis) <= 7;
+                                $h7Susut =
+                                    $susut && $susut->greaterThanOrEqualTo($now) && $now->diffInDays($susut) <= 7;
+                            @endphp
+
+                            {{-- FITUR REMINDER WA MANUAL --}}
+                            @php
+                                $now = now()->startOfDay();
+                                $servis = $barang->tgl_servis_berikutnya
+                                    ? \Carbon\Carbon::parse($barang->tgl_servis_berikutnya)->startOfDay()
+                                    : null;
+                                $susut = $barang->tgl_penyusutan_habis
+                                    ? \Carbon\Carbon::parse($barang->tgl_penyusutan_habis)->startOfDay()
+                                    : null;
+
+                                $h7Servis =
+                                    $servis && $servis->greaterThanOrEqualTo($now) && $now->diffInDays($servis) <= 7;
+                                $h7Susut =
+                                    $susut && $susut->greaterThanOrEqualTo($now) && $now->diffInDays($susut) <= 7;
+                            @endphp
+
+                            {{-- UPDATE: Diizinkan untuk Administrator ATAU Pegawai --}}
+                            @if (($h7Servis || $h7Susut) && in_array(auth()->user()->role, ['Administrator', 'Pegawai']))
+                                <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg shadow-sm">
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                        <div class="flex items-start">
+                                            <i
+                                                class="fas fa-exclamation-triangle text-yellow-500 text-xl mr-3 mt-0.5"></i>
+                                            <div>
+                                                <h4 class="text-sm font-bold text-yellow-800">Perhatian!</h4>
+                                                <p class="text-sm text-yellow-700">Aset ini sudah mendekati waktu tindak
+                                                    lanjut (H-7 Servis/Penyusutan).</p>
+                                            </div>
+                                        </div>
+                                        <form action="{{ route('barang.remind', $barang->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                class="whitespace-nowrap bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2 px-4 rounded shadow transition-colors">
+                                                <i class="fab fa-whatsapp mr-1"></i> Kirim WA ke Admin
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endif
+                            {{-- END FITUR REMINDER WA --}}
 
                         </div>
                     </div>

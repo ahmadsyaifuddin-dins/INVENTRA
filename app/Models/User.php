@@ -18,7 +18,7 @@ class User extends Authenticatable
     protected $table = 'pengguna';
 
     // Kolom yang bisa dicari
-    protected $searchable = ['nama_lengkap', 'username', 'role'];
+    protected $searchable = ['nama_lengkap', 'username', 'role', 'no_wa'];
 
     /**
      * Kita guard ID saja, sisanya boleh diisi massal

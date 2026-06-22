@@ -51,15 +51,36 @@
                         <x-table.sortable-th name="merek" label="Merek" />
                         <x-table.sortable-th name="tahun_perolehan" label="Tahun" />
 
-                        @can('manage-barang')
-                            <th class="px-6 py-3 text-right text-xs font-bold text-indigo-800 uppercase tracking-wider">
-                                Aksi
-                            </th>
-                        @endcan
+                        <th class="px-6 py-3 text-right text-xs font-bold text-indigo-800 uppercase tracking-wider">
+                            Aksi
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($barangs as $b)
+                        {{-- LOGIKA CEK H-7 SERVIS/PENYUSUTAN --}}
+                        @php
+                            $now = now()->startOfDay();
+                            $servis = $b->tgl_servis_berikutnya
+                                ? \Carbon\Carbon::parse($b->tgl_servis_berikutnya)->startOfDay()
+                                : null;
+                            $susut = $b->tgl_penyusutan_habis
+                                ? \Carbon\Carbon::parse($b->tgl_penyusutan_habis)->startOfDay()
+                                : null;
+
+                            $h7Servis =
+                                $servis && $servis->greaterThanOrEqualTo($now) && $now->diffInDays($servis) <= 7;
+                            $h7Susut = $susut && $susut->greaterThanOrEqualTo($now) && $now->diffInDays($susut) <= 7;
+
+                            $alertText = [];
+                            if ($h7Servis) {
+                                $alertText[] = 'Servis';
+                            }
+                            if ($h7Susut) {
+                                $alertText[] = 'Penyusutan';
+                            }
+                        @endphp
+
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
@@ -84,7 +105,20 @@
                                         <div class="text-sm font-bold text-gray-900">{{ $b->nama_barang }}</div>
                                         <div
                                             class="text-xs text-gray-500 font-mono bg-gray-100 px-1 py-0.5 rounded inline-block mt-1">
-                                            {{ $b->kode_barang }}</div>
+                                            {{ $b->kode_barang }}
+                                        </div>
+
+                                        {{-- TAMPILAN BADGE ALERT H-7 --}}
+                                        @if (!empty($alertText))
+                                            <div class="mt-1.5 flex">
+                                                <span
+                                                    class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-800 border border-yellow-300">
+                                                    <i class="fas fa-exclamation-triangle mr-1 text-yellow-600"></i>
+                                                    Mendekati {{ implode(' & ', $alertText) }}
+                                                </span>
+                                            </div>
+                                        @endif
+
                                     </div>
                                 </div>
                             </td>

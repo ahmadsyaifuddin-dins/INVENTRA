@@ -42,6 +42,7 @@ class UserController extends Controller
             'email' => ['nullable', 'email', 'unique:pengguna'],
             'password' => ['required', 'string', 'min:6'],
             'role' => ['required', 'in:Administrator,Pegawai,Gudang,Pimpinan'],
+            'no_wa' => ['nullable', 'string', 'max:20'],
         ]);
 
         User::create([
@@ -50,6 +51,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'no_wa' => $request->no_wa,
         ]);
 
         return redirect()->route('users.index')->with('success', 'Pengguna berhasil ditambahkan!');
@@ -74,6 +76,7 @@ class UserController extends Controller
             'email' => ['nullable', 'email', 'unique:pengguna,email,'.$user->id],
             // UPDATE VALIDASI ROLE DISINI JUGA
             'role' => ['required', 'in:Administrator,Pegawai,Gudang,Pimpinan'],
+            'no_wa' => ['nullable', 'string', 'max:20'],
         ];
 
         // Password opsional saat update
@@ -88,6 +91,7 @@ class UserController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'role' => $request->role,
+            'no_wa' => $request->no_wa,
         ];
 
         if ($request->filled('password')) {

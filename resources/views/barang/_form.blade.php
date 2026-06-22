@@ -13,7 +13,7 @@
             placeholder="Cth: ASUS, Samsung, Olympic" />
     </div>
 
-    <div>
+    <div class="space-y-4">
         <div class="grid grid-cols-2 gap-4">
             <x-forms.input name="tahun_perolehan" type="number" label="Tahun Perolehan" :value="$barang->tahun_perolehan ?? date('Y')"
                 placeholder="YYYY" required="true" />
@@ -21,6 +21,17 @@
             <x-forms.input name="satuan" label="Satuan" :value="$barang->satuan" placeholder="Unit/Buah/Set"
                 required="true" />
         </div>
+
+        {{-- TAMBAHAN: Tanggal Penyusutan & Servis Berkala --}}
+        <div class="grid grid-cols-2 gap-4">
+            <x-forms.input type="date" name="tgl_penyusutan_habis" label="Tgl Penyusutan Habis" :value="$barang->tgl_penyusutan_habis" />
+
+            <x-forms.input type="date" name="tgl_servis_berikutnya" label="Tgl Servis Berikutnya"
+                :value="$barang->tgl_servis_berikutnya" />
+        </div>
+        <p class="text-xs text-gray-500 -mt-2 mb-2 italic">* Kosongkan jika aset tidak memiliki masa penyusutan atau
+            tidak butuh servis berkala.</p>
+        {{-- END TAMBAHAN --}}
 
         <x-forms.image-upload name="foto" label="Foto Barang (Opsional)" :value="$barang->foto" />
     </div>

@@ -3,6 +3,13 @@
 
 <x-forms.input name="username" label="Username" :value="$user->username" placeholder="Username untuk login" required="true" />
 
+{{-- TAMBAHAN INPUT NO WA --}}
+<x-forms.input name="no_wa" label="Nomor WhatsApp" :value="$user->no_wa"
+    placeholder="Contoh: 628123456789 (Gunakan format 62)" required="false" />
+<p class="text-xs text-gray-500 -mt-2 mb-4 italic">* Opsional. Digunakan untuk menerima notifikasi sistem (seperti
+    jadwal servis aset).</p>
+{{-- END TAMBAHAN --}}
+
 <x-forms.input type="password" name="password" label="Password"
     placeholder="{{ $user->exists ? 'Kosongkan jika tidak ingin mengganti password' : 'Minimal 6 karakter' }}"
     :required="!$user->exists" />
