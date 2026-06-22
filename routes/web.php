@@ -101,6 +101,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/kondisi', [LaporanController::class, 'kondisi'])->name('kondisi');
         Route::get('/mutasi', [LaporanController::class, 'mutasi'])->name('mutasi');
         Route::get('/kategori', [LaporanController::class, 'perKategori'])->name('per_kategori');
+
+        Route::get('/peminjaman', [LaporanController::class, 'peminjaman'])->name('peminjaman');
+        Route::get('/per-pegawai', [LaporanController::class, 'perPegawai'])->name('per_pegawai');
+        Route::get('/maintenance', [LaporanController::class, 'maintenance'])->name('maintenance');
+        Route::get('/audit', [LaporanController::class, 'audit'])->name('audit');
     });
 
 });

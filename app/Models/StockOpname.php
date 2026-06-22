@@ -22,4 +22,10 @@ class StockOpname extends Model
     {
         return $this->hasMany(StockOpnameDetail::class);
     }
+
+    // Tambahkan relasi ini di dalam class StockOpname
+    public function barang()
+    {
+        return $this->belongsTo(Barang::class, 'barang_id');
+    }
 }
