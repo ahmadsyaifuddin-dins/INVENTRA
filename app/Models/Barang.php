@@ -27,4 +27,19 @@ class Barang extends Model
     {
         return $this->hasMany(Penempatan::class, 'barang_id');
     }
+
+    public function peminjamans()
+    {
+        return $this->hasMany(Peminjaman::class, 'barang_id');
+    }
+
+    // Cek apakah barang sedang dipinjam saat ini
+    public function getStatusKetersediaanAttribute()
+    {
+        $sedangDipinjam = $this->peminjamans()
+            ->whereIn('status', ['Menunggu ACC', 'Dipinjam', 'Terlambat'])
+            ->exists();
+
+        return $sedangDipinjam ? 'Tidak Tersedia' : 'Tersedia';
+    }
 }

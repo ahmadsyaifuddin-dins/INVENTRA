@@ -9,3 +9,6 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('app:send-asset-reminder')->dailyAt('08:00');
+
+// Scheduler Pengembalian Peminjaman
+Schedule::command('app:send-peminjaman-reminder')->dailyAt('07:30');

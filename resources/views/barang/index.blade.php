@@ -107,6 +107,22 @@
                                             class="text-xs text-gray-500 font-mono bg-gray-100 px-1 py-0.5 rounded inline-block mt-1">
                                             {{ $b->kode_barang }}
                                         </div>
+                                        <div
+                                            class="text-xs text-gray-500 font-mono bg-gray-100 px-1 py-0.5 rounded inline-block mt-1">
+                                            {{ $b->kode_barang }}
+                                        </div>
+
+                                        {{-- BADGE KETERSEDIAAN ASET --}}
+                                        <div class="mt-1">
+                                            @if ($b->status_ketersediaan === 'Tersedia')
+                                                <span
+                                                    class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700">Tersedia</span>
+                                            @else
+                                                <span
+                                                    class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700">Sedang
+                                                    Dipinjam/Dipesan</span>
+                                            @endif
+                                        </div>
 
                                         {{-- TAMPILAN BADGE ALERT H-7 --}}
                                         @if (!empty($alertText))

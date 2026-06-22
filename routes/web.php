@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PenempatanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RuanganController;
@@ -48,6 +49,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('kategori', KategoriController::class)->except(['index', 'show']);
         Route::resource('ruangan', RuanganController::class)->except(['index', 'show']);
 
+        Route::post('/peminjaman/remind-bulk', [PeminjamanController::class, 'remindBulk'])->name('peminjaman.remindBulk');
+        Route::post('/peminjaman/{peminjaman}/remind', [PeminjamanController::class, 'remindSingle'])->name('peminjaman.remindSingle');
+
         // Hapus Barang hanya boleh dilakukan oleh Admin
         Route::delete('/barang/{barang}', [BarangController::class, 'destroy'])->name('barang.destroy');
     });
@@ -62,6 +66,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // (Masih bisa diakses Pegawai. Jika Pegawai juga dilarang input transaksi, hapus 'Pegawai' di baris bawah ini)
     Route::middleware('role:Administrator,Pegawai,Gudang')->group(function () {
         Route::resource('penempatan', PenempatanController::class)->except(['index', 'show']);
+        Route::resource('peminjaman', PeminjamanController::class);
 
         Route::get('/opname/create', [StockOpnameController::class, 'create'])->name('opname.create');
         Route::get('/opname/formulir', [StockOpnameController::class, 'formulir'])->name('opname.formulir');

@@ -119,6 +119,15 @@
                 </x-slot>
                 {{ __('Pemeriksaan Aset') }}
             </x-nav-link>
+
+            <x-nav-link href="{{ route('peminjaman.index') }}" :active="request()->routeIs('peminjaman.*')"
+                class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('peminjaman.*') ? 'bg-indigo-700 text-white shadow-md ring-1 ring-indigo-600' : 'text-indigo-100 hover:bg-indigo-800/50 hover:text-white' }}">
+                <x-slot name="icon">
+                    <i
+                        class="fas fa-handshake mr-3 w-5 text-center {{ request()->routeIs('peminjaman.*') ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-200' }}"></i>
+                </x-slot>
+                {{ __('Peminjaman Aset') }}
+            </x-nav-link>
         @endif
 
         @if (in_array(Auth::user()->role, ['Administrator', 'Pegawai', 'Pimpinan']))
