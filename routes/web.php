@@ -42,29 +42,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // (Wajib ditaruh di atas sebelum route 'show' / wildcard)
     // ====================================================
 
-    // A. Master Data (Admin & Pegawai)
-    Route::middleware('role:Administrator,Pegawai')->group(function () {
-        // Create, Store, Edit, Update, Destroy Kategori & Ruangan
+    // A. Master Data & Hapus Barang (HANYA ADMINISTRATOR)
+    // Sesuai revisi: Pegawai tidak bisa tambah/edit/hapus master data
+    Route::middleware('role:Administrator')->group(function () {
         Route::resource('kategori', KategoriController::class)->except(['index', 'show']);
         Route::resource('ruangan', RuanganController::class)->except(['index', 'show']);
 
-        // Hapus Barang (Hanya Admin & Pegawai)
+        // Hapus Barang hanya boleh dilakukan oleh Admin
         Route::delete('/barang/{barang}', [BarangController::class, 'destroy'])->name('barang.destroy');
     });
 
-    // B. Barang & Transaksi (Admin, Pegawai, Gudang)
-    Route::middleware('role:Administrator,Pegawai,Gudang')->group(function () {
-        // Resource Barang (Create, Store, Edit, Update) - KECUALI Show & Index & Destroy
-        // Destroy ditangani grup di atas, Show & Index di bawah
+    // B. Tambah & Edit Barang (ADMINISTRATOR & GUDANG)
+    // Pegawai dicabut aksesnya dari sini
+    Route::middleware('role:Administrator,Gudang')->group(function () {
         Route::resource('barang', BarangController::class)->except(['index', 'show', 'destroy']);
+    });
 
-        // Resource Penempatan
+    // C. Transaksi Penempatan & Opname
+    // (Masih bisa diakses Pegawai. Jika Pegawai juga dilarang input transaksi, hapus 'Pegawai' di baris bawah ini)
+    Route::middleware('role:Administrator,Pegawai,Gudang')->group(function () {
         Route::resource('penempatan', PenempatanController::class)->except(['index', 'show']);
 
         Route::get('/opname/create', [StockOpnameController::class, 'create'])->name('opname.create');
-
         Route::get('/opname/formulir', [StockOpnameController::class, 'formulir'])->name('opname.formulir');
-
         Route::post('/opname', [StockOpnameController::class, 'store'])->name('opname.store');
     });
 
@@ -73,17 +73,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // (Ditaruh di bawah agar tidak 'memakan' route create)
     // ====================================================
 
-    // Index List (Semua Role)
+    // Index List (Semua Role bisa melihat / Show Data)
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
     Route::get('/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
     Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');
     Route::get('/penempatan', [PenempatanController::class, 'index'])->name('penempatan.index');
     Route::get('/opname', [StockOpnameController::class, 'index'])->name('opname.index');
 
-    // Show Detail (Wildcard {id} menangkap segalanya, jadi wajib paling bawah)
-    // Note: Pastikan controller punya method 'show', jika tidak error 500/undefined method
+    // Show Detail (Semua Role bisa melihat detail)
     Route::get('/barang/{barang}', [BarangController::class, 'show'])->name('barang.show');
-
     Route::get('/opname/{opname}', [StockOpnameController::class, 'show'])->name('opname.show');
     Route::get('/opname/{opname}/print', [StockOpnameController::class, 'print'])->name('opname.print');
 

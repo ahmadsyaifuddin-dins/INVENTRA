@@ -24,19 +24,19 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // 2. Gate untuk Master Data (Kategori & Ruangan)
-        // Akses: Admin & Pegawai
+        // UPDATE: HANYA ADMINISTRATOR
         Gate::define('manage-master', function (User $user) {
-            return in_array($user->role, ['Administrator', 'Pegawai']);
+            return $user->role === 'Administrator';
         });
 
-        // 3. Gate untuk Kelola Barang & Transaksi
-        // Akses: Admin, Pegawai, Gudang
+        // 3. Gate untuk Kelola Barang
+        // UPDATE: HANYA ADMINISTRATOR & GUDANG (Pegawai dicabut)
         Gate::define('manage-barang', function (User $user) {
-            return in_array($user->role, ['Administrator', 'Pegawai', 'Gudang']);
+            return in_array($user->role, ['Administrator', 'Gudang']);
         });
 
         // 4. Gate untuk Laporan
-        // Akses: Admin, Pegawai, Pimpinan
+        // Akses: Admin, Pegawai, Pimpinan (Pegawai tetap bisa lihat laporan)
         Gate::define('view-laporan', function (User $user) {
             return in_array($user->role, ['Administrator', 'Pegawai', 'Pimpinan']);
         });
