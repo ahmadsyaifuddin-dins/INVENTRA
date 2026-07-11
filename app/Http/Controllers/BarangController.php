@@ -238,16 +238,32 @@ class BarangController extends Controller
         $kodeKat = $kategori->kode_kategori ?? strtoupper(substr($kategori->nama_kategori, 0, 3));
         $kodeSub = $subKategori->kode_sub ?? '00';
 
-        // Hitung urutan barang berdasarkan sub kategori dan tahun yang sama di database
-        $jumlahBarang = Barang::where('sub_kategori_id', $subKategoriId)
-            ->where('tahun_perolehan', $tahun)
-            ->count();
+        // 1. Buat prefix dasar pencarian (Contoh: ELK.02.2026)
+        $prefix = "{$kodeKat}.{$kodeSub}.{$tahun}";
 
-        // Format urutan jadi 2 digit (contoh: 1 jadi 01, 12 tetap 12)
-        $urutan = str_pad($jumlahBarang + 1, 2, '0', STR_PAD_LEFT);
+        // 2. CARI AMAN: Ambil kode_barang terakhir di database yang memiliki awalan prefix tsb
+        $barangTerakhir = Barang::where('kode_barang', 'like', "{$prefix}.%")
+            ->orderByRaw('LENGTH(kode_barang) DESC') // Jaga-jaga kalau urutan tembus > 99 (jadi 3 digit)
+            ->orderBy('kode_barang', 'desc')
+            ->first();
 
-        // 00 di akhir adalah default untuk Ruangan (Gudang/Belum Didistribusikan)
-        $kode = "{$kodeKat}.{$kodeSub}.{$tahun}.{$urutan}";
+        if ($barangTerakhir) {
+            // Pecah kode "ELK.02.2026.02" berdasarkan titik
+            $parts = explode('.', $barangTerakhir->kode_barang);
+
+            // Ambil bagian urutan (Index ke-3) lalu jadikan angka (integer)
+            $urutanTerakhir = isset($parts[3]) ? (int) $parts[3] : 0;
+            $urutanBaru = $urutanTerakhir + 1;
+        } else {
+            // Jika belum ada barang sama sekali dengan prefix tersebut
+            $urutanBaru = 1;
+        }
+
+        // 3. Format urutan kembali jadi minimal 2 digit (1 -> 01, 12 -> 12)
+        $urutan = str_pad($urutanBaru, 2, '0', STR_PAD_LEFT);
+
+        // Gabungkan jadi kode final sesuai format baru
+        $kode = "{$prefix}.{$urutan}";
 
         return response()->json(['kode' => $kode]);
     }
