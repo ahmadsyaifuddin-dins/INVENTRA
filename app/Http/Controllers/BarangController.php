@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use App\Models\Kategori;
+use App\Models\SubKategori;
 use App\Models\User;
 use App\Notifications\BarangMasukNotification;
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ class BarangController extends Controller
             'kode_barang' => 'required|string|unique:barang,kode_barang',
             'nama_barang' => 'required|string|max:100',
             'kategori_id' => 'required|exists:kategori,id',
+            'sub_kategori_id' => 'required|exists:sub_kategori,id',
             'merek' => 'nullable|string|max:50',
             'tahun_perolehan' => 'required|digits:4|integer|min:2000|max:'.(date('Y') + 1),
             'satuan' => 'required|string|max:20',
@@ -86,6 +88,7 @@ class BarangController extends Controller
             'nama_barang' => 'required|string|max:100',
             'kategori_id' => 'required|exists:kategori,id',
             'merek' => 'nullable|string|max:50',
+            'sub_kategori_id' => 'required|exists:sub_kategori,id',
             'tahun_perolehan' => 'required|digits:4',
             'satuan' => 'required|string',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -204,5 +207,48 @@ class BarangController extends Controller
         }
 
         return back()->with('success', "Pengingat WA manual berhasil dikirim ke $berhasil Administrator.");
+    }
+
+    // =========================================================================
+    // FITUR AJAX: OTOMATISASI KODE BARANG
+    // =========================================================================
+
+    public function getSubKategori(Request $request)
+    {
+        $kategoriId = $request->kategori_id;
+        $subKategoris = SubKategori::where('kategori_id', $kategoriId)->get();
+
+        return response()->json($subKategoris);
+    }
+
+    public function generateKodeAjax(Request $request)
+    {
+        $kategoriId = $request->kategori_id;
+        $subKategoriId = $request->sub_kategori_id;
+        $tahun = $request->tahun;
+
+        if (! $kategoriId || ! $subKategoriId || ! $tahun) {
+            return response()->json(['kode' => '']);
+        }
+
+        $kategori = Kategori::find($kategoriId);
+        $subKategori = SubKategori::find($subKategoriId);
+
+        // Ambil kode dari tabel, jika kosong fallback ke 3 huruf pertama kategori
+        $kodeKat = $kategori->kode_kategori ?? strtoupper(substr($kategori->nama_kategori, 0, 3));
+        $kodeSub = $subKategori->kode_sub ?? '00';
+
+        // Hitung urutan barang berdasarkan sub kategori dan tahun yang sama di database
+        $jumlahBarang = Barang::where('sub_kategori_id', $subKategoriId)
+            ->where('tahun_perolehan', $tahun)
+            ->count();
+
+        // Format urutan jadi 2 digit (contoh: 1 jadi 01, 12 tetap 12)
+        $urutan = str_pad($jumlahBarang + 1, 2, '0', STR_PAD_LEFT);
+
+        // 00 di akhir adalah default untuk Ruangan (Gudang/Belum Didistribusikan)
+        $kode = "{$kodeKat}.{$kodeSub}.{$tahun}.{$urutan}";
+
+        return response()->json(['kode' => $kode]);
     }
 }

@@ -65,6 +65,15 @@
                     </x-slot>
                     {{ __('Data Kategori') }}
                 </x-nav-link>
+
+                <x-nav-link href="{{ route('subkategori.index') }}" :active="request()->routeIs('subkategori.*')"
+                    class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('subkategori.*') ? 'bg-indigo-700 text-white shadow-md ring-1 ring-indigo-600' : 'text-indigo-100 hover:bg-indigo-800/50 hover:text-white' }}">
+                    <x-slot name="icon">
+                        <i
+                            class="fas fa-sitemap mr-3 {{ request()->routeIs('subkategori.*') ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-200' }}"></i>
+                    </x-slot>
+                    {{ __('Data Sub Kategori') }}
+                </x-nav-link>
             @endif
 
             <x-nav-link href="{{ route('barang.index') }}" :active="request()->routeIs('barang.*')"

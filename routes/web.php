@@ -10,6 +10,7 @@ use App\Http\Controllers\PenempatanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\StockOpnameController;
+use App\Http\Controllers\SubKategoriController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -60,6 +61,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Pegawai dicabut aksesnya dari sini
     Route::middleware('role:Administrator,Gudang')->group(function () {
         Route::resource('barang', BarangController::class)->except(['index', 'show', 'destroy']);
+        // Rute AJAX untuk Otomatisasi Kode Barang
+        Route::get('/ajax/sub-kategori', [BarangController::class, 'getSubKategori'])->name('ajax.subKategori');
+        Route::get('/ajax/generate-kode-barang', [BarangController::class, 'generateKodeAjax'])->name('ajax.generateKodeBarang');
     });
 
     // C. Transaksi Penempatan & Opname
@@ -81,6 +85,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Index List (Semua Role bisa melihat / Show Data)
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
+    Route::resource('subkategori', SubKategoriController::class)->except(['show']);
     Route::get('/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
     Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');
     Route::get('/penempatan', [PenempatanController::class, 'index'])->name('penempatan.index');
