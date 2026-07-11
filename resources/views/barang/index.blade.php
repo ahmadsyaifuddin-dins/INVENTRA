@@ -107,10 +107,6 @@
                                             class="text-xs text-gray-500 font-mono bg-gray-100 px-1 py-0.5 rounded inline-block mt-1">
                                             {{ $b->kode_barang }}
                                         </div>
-                                        <div
-                                            class="text-xs text-gray-500 font-mono bg-gray-100 px-1 py-0.5 rounded inline-block mt-1">
-                                            {{ $b->kode_barang }}
-                                        </div>
 
                                         {{-- BADGE KETERSEDIAAN ASET --}}
                                         <div class="mt-1">
