@@ -305,7 +305,7 @@ class LaporanController extends Controller
 
         if ($request->has('download_pdf')) {
             $data = $query->get();
-            $namaBulan = Carbon::create()->month($bulan)->translatedFormat('F');
+            $namaBulan = Carbon::create()->month((int) $bulan)->translatedFormat('F');
 
             $pdf = FacadePdf::loadView('laporan.pdf.maintenance_pdf', [
                 'data' => $data,
