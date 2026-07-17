@@ -8,12 +8,8 @@ use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // 1. Akun Administrator
         DB::table('pengguna')->insert([
             'username' => 'admin',
             'email' => 'lizainventra@gmail.com',
@@ -24,17 +20,31 @@ class UserSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 2. Akun Pegawai (Tata Usaha)
-        DB::table('pengguna')->insert([
-            'username' => 'pegawai',
-            'nama_lengkap' => 'Haliza',
-            'password' => Hash::make('password'),
-            'role' => 'Pegawai',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // KITA BUAT 10 PEGAWAI AGAR LAPORAN STATISTIK PENUH
+        $pegawais = [
+            ['username' => 'haliza', 'nama' => 'Haliza Sabila Halim'],
+            ['username' => 'udin', 'nama' => 'Syaifuddin'],
+            ['username' => 'budi', 'nama' => 'Budi Santoso'],
+            ['username' => 'citra', 'nama' => 'Citra Kirana'],
+            ['username' => 'dewi', 'nama' => 'Dewi Lestari'],
+            ['username' => 'eko', 'nama' => 'Eko Prasetyo'],
+            ['username' => 'fajar', 'nama' => 'Fajar Nugraha'],
+            ['username' => 'gina', 'nama' => 'Gina Sonia'],
+            ['username' => 'hendra', 'nama' => 'Hendra Setiawan'],
+            ['username' => 'intan', 'nama' => 'Intan Permata'],
+        ];
 
-        // 3. Akun Gudang (Lapangan)
+        foreach ($pegawais as $p) {
+            DB::table('pengguna')->insert([
+                'username' => $p['username'],
+                'nama_lengkap' => $p['nama'],
+                'password' => Hash::make('password'),
+                'role' => 'Pegawai',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
         DB::table('pengguna')->insert([
             'username' => 'gudang',
             'nama_lengkap' => 'Petugas Gudang',
@@ -44,7 +54,6 @@ class UserSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 4. Akun Pimpinan (Kajari/Kasi)
         DB::table('pengguna')->insert([
             'username' => 'pimpinan',
             'nama_lengkap' => 'Kepala Kejaksaan',
