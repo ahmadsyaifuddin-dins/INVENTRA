@@ -6,10 +6,8 @@ use App\Models\Barang;
 use App\Models\Kategori;
 use App\Models\Peminjaman;
 use App\Models\Penempatan;
-use App\Models\Ruangan; // Tambahan Model Baru
-use App\Models\StockOpnameDetail;
-// Tambahan Model Baru
-use App\Models\User; // Tambahan Model Baru (Sesuaikan jika nama model di projekmu berbeda, misal: Opname)
+use App\Models\Ruangan;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -47,7 +45,8 @@ class LaporanController extends Controller
                 'endDate' => $endDate,
             ]);
 
-            return $pdf->download('Laporan_Barang_'.date('YmdHis').'.pdf');
+            // UBAH: dari download jadi stream
+            return $pdf->stream('Laporan_Barang_'.date('YmdHis').'.pdf');
         }
 
         $barangs = $query->latest()->paginate(10)->withQueryString();
@@ -87,7 +86,8 @@ class LaporanController extends Controller
                 'namaRuangan' => $namaRuangan,
             ]);
 
-            return $pdf->setPaper('a4', 'landscape')->download('Laporan_Distribusi_'.date('YmdHis').'.pdf');
+            // UBAH: dari download jadi stream
+            return $pdf->setPaper('a4', 'landscape')->stream('Laporan_Distribusi_'.date('YmdHis').'.pdf');
         }
 
         $distribusi = $query->latest()->paginate(10)->withQueryString();
@@ -125,7 +125,8 @@ class LaporanController extends Controller
                 'kondisi' => $kondisi ?? 'Semua Kondisi',
             ]);
 
-            return $pdf->download('Laporan_Kondisi_'.date('YmdHis').'.pdf');
+            // UBAH: dari download jadi stream
+            return $pdf->stream('Laporan_Kondisi_'.date('YmdHis').'.pdf');
         }
 
         $dataKondisi = $query->latest()->paginate(10)->withQueryString();
@@ -155,7 +156,8 @@ class LaporanController extends Controller
                 'endDate' => $endDate,
             ]);
 
-            return $pdf->download('Laporan_Mutasi_'.date('YmdHis').'.pdf');
+            // UBAH: dari download jadi stream
+            return $pdf->stream('Laporan_Mutasi_'.date('YmdHis').'.pdf');
         }
 
         $mutasi = $query->paginate(10)->withQueryString();
@@ -193,7 +195,8 @@ class LaporanController extends Controller
                 'endDate' => $endDate,
             ]);
 
-            return $pdf->download('Laporan_Kategori_'.date('YmdHis').'.pdf');
+            // UBAH: dari download jadi stream
+            return $pdf->stream('Laporan_Kategori_'.date('YmdHis').'.pdf');
         }
 
         $barangs = $query->latest()->paginate(10)->withQueryString();
@@ -212,14 +215,13 @@ class LaporanController extends Controller
      */
     public function peminjaman(Request $request)
     {
-        $statusFilter = $request->input('status'); // Pilihan: Dipinjam, Terlambat, atau Kosong (Semua Aktif)
+        $statusFilter = $request->input('status');
 
         $query = Peminjaman::with(['barang', 'user']);
 
         if ($statusFilter) {
             $query->where('status', $statusFilter);
         } else {
-            // Default hanya memunculkan aset yang belum kembali ke gudang
             $query->whereIn('status', ['Dipinjam', 'Terlambat']);
         }
 
@@ -230,7 +232,8 @@ class LaporanController extends Controller
                 'statusFilter' => $statusFilter ?? 'Semua Peminjaman Aktif',
             ]);
 
-            return $pdf->download('Laporan_Peminjaman_Aktif_'.date('YmdHis').'.pdf');
+            // UBAH: dari download jadi stream
+            return $pdf->stream('Laporan_Peminjaman_Aktif_'.date('YmdHis').'.pdf');
         }
 
         $peminjamans = $query->paginate(10)->withQueryString();
@@ -246,7 +249,6 @@ class LaporanController extends Controller
     {
         $userId = $request->input('user_id');
 
-        // Mengambil user dengan role Pegawai beserta agregasi hitungan kustom langsung dari Query DB
         $query = User::where('role', 'Pegawai')
             ->withCount([
                 'peminjamans as total_pinjam',
@@ -268,11 +270,12 @@ class LaporanController extends Controller
                 'data' => $data,
             ]);
 
-            return $pdf->download('Laporan_Statistik_Pegawai_'.date('YmdHis').'.pdf');
+            // UBAH: dari download jadi stream
+            return $pdf->stream('Laporan_Statistik_Pegawai_'.date('YmdHis').'.pdf');
         }
 
         $pegawais = $query->paginate(10)->withQueryString();
-        $listPegawai = User::where('role', 'Pegawai')->get(); // Untuk dropdown filter
+        $listPegawai = User::where('role', 'Pegawai')->get();
 
         return view('laporan.per_pegawai', compact('pegawais', 'listPegawai', 'userId'));
     }
@@ -283,19 +286,17 @@ class LaporanController extends Controller
      */
     public function maintenance(Request $request)
     {
-        $jenis = $request->input('jenis'); // 'Servis' atau 'Penyusutan'
+        $jenis = $request->input('jenis');
         $bulan = $request->input('bulan', date('m'));
         $tahun = $request->input('tahun', date('Y'));
 
         $query = Barang::with('kategori');
 
-        // Filter dinamis berdasarkan jenis estimasi agenda
         if ($jenis === 'Servis') {
             $query->whereMonth('tgl_servis_berikutnya', $bulan)->whereYear('tgl_servis_berikutnya', $tahun);
         } elseif ($jenis === 'Penyusutan') {
             $query->whereMonth('tgl_penyusutan_habis', $bulan)->whereYear('tgl_penyusutan_habis', $tahun);
         } else {
-            // Jika kosong, tampilkan berkas gabungan yang tgl servis ATAU susutnya jatuh pada bulan terpilih
             $query->where(function ($q) use ($bulan, $tahun) {
                 $q->whereMonth('tgl_servis_berikutnya', $bulan)->whereYear('tgl_servis_berikutnya', $tahun)
                     ->orWhereMonth('tgl_penyusutan_habis', $bulan)->whereYear('tgl_penyusutan_habis', $tahun);
@@ -313,7 +314,8 @@ class LaporanController extends Controller
                 'tahun' => $tahun,
             ]);
 
-            return $pdf->download('Laporan_Agenda_Aset_'.date('YmdHis').'.pdf');
+            // UBAH: dari download jadi stream
+            return $pdf->stream('Laporan_Agenda_Aset_'.date('YmdHis').'.pdf');
         }
 
         $barangs = $query->paginate(10)->withQueryString();
@@ -330,11 +332,9 @@ class LaporanController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        // UBAH: Gunakan StockOpnameDetail agar stok_sistem & stok_fisik terbaca
         $query = \App\Models\StockOpnameDetail::with(['barang', 'opname']);
 
         if ($startDate && $endDate) {
-            // Karena kita pakai model detail, filter tanggalnya harus tembus ke relasi opname (induk)
             $query->whereHas('opname', function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59']);
             });
@@ -348,7 +348,8 @@ class LaporanController extends Controller
                 'endDate' => $endDate,
             ]);
 
-            return $pdf->download('Laporan_Hasil_Audit_Opname_'.date('YmdHis').'.pdf');
+            // UBAH: dari download jadi stream
+            return $pdf->stream('Laporan_Hasil_Audit_Opname_'.date('YmdHis').'.pdf');
         }
 
         $audits = $query->latest()->paginate(10)->withQueryString();
